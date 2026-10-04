@@ -1,68 +1,73 @@
 # React Components Lesson
 
-A 50-minute, Replit-ready React lesson on components and Context. Students refactor a
-small app from **prop drilling** to **React Context**, then add a user dropdown and
-role-based permissions. An interactive **Component Anatomy Lab** shows why components
-are drawn where they are.
+A 50-minute, Replit-ready React lesson. Students explore a small blog app, **Team Blog**,
+in an interactive **Component Anatomy Lab**, then refactor the real code: they move the
+signed-in user into **React Context** and replace hand-written role checks with a
+`<Can>` permission component.
+
+Everything is plain React with no other libraries: `useState`, `useEffect`, `useContext`, and Vite.
 
 ## What's inside
 
-| Path | What it is | Audience |
-| --- | --- | --- |
-| `src/App.jsx` | The starter app: a working prop-drilling version to refactor | Students |
-| `public/anatomy.html` | Component Anatomy Lab: a mock app with lenses for boundaries, reuse, props vs. context, and granularity | Students + teacher |
-| `teacher/LESSON_PLAN.md` | Minute-by-minute plan with checkpoints, exit ticket, and homework | Teacher |
-| `teacher/solution/App.jsx` | The finished build: `AuthProvider`, `useAuth`, `UserMenu`, `<Can>` | Teacher |
+| Path | What it is |
+| --- | --- |
+| `src/` | The starter app. It works, but passes `user` down through props. Students edit this. |
+| `public/anatomy.html` | The Component Anatomy Lab. Every box in it matches a file in `src/components`. |
+| `teacher/LESSON_PLAN.md` | A minute-by-minute plan with checkpoints, an exit ticket, and homework. |
+| `teacher/solution/src/` | The finished app, with `AuthProvider`, `useAuth`, and `<Can>`. Same file layout as `src/`. |
 
 ## Get started
 
-**On Replit:** choose **Create Repl → Import from GitHub**, paste this repo's URL, then
-click **Run**. The first run installs packages, which takes about 20 seconds, and then
-the app opens in the preview pane.
+**On Replit:** choose **Create Repl → Import from GitHub**, paste this repo's URL, and click
+**Run**. The first run installs packages, which takes about 20 seconds.
 
-**Locally:** fork or clone the repo, then run:
+**Locally:**
 
 ```bash
 npm install
 npm run dev
 ```
 
-The app runs at `http://localhost:5173`, and the Anatomy Lab is at
-`http://localhost:5173/anatomy.html`. You can also open `public/anatomy.html`
-directly in a browser, since it needs no build step.
+The app runs at `http://localhost:5173`, and the lab is at `http://localhost:5173/anatomy.html`.
+You can also open `public/anatomy.html` straight in a browser, since it needs no build step.
 
 ## For students
 
-All of today's code lives in `src/App.jsx`. It already works, so log in as
-**viewer**, **editor**, and **admin** before you change anything.
+1. Sign in as **viewer**, **editor**, and **admin**, and notice what changes.
+2. Open the lab at `/anatomy.html`. Click a box, then open the file it names.
+3. Follow along as we refactor. Your checkpoints:
+   - `src/auth/AuthContext.jsx` exists, with `AuthProvider` and `useAuth`.
+   - No component receives `user`, `login`, or `logout` as a prop.
+   - Every `user.role === …` check is replaced with `<Can permission="…">`.
 
-### Checkpoints
+When you're done, set the lab to **Code: Finished**. Your code should match what it shows.
 
-1. `AuthProvider` and `useAuth` replace every drilled `user` / `logout` prop.
-2. `UserMenu` reads from context and closes on an outside click or Escape.
-3. `<Can permission="...">` hides any button a role isn't allowed to use.
-
-### Vocabulary
-
-prop drilling · context · Provider · consumer · default value · custom hook ·
-presentational component · permission · role
-
-## Component Anatomy Lab
-
-Open `/anatomy.html` and switch between four lenses:
-
-- **Boundaries** colors each component by kind: layout, feature, presentational, primitive, or logic-only.
-- **Reuse** shows how many times each component appears from a single definition.
-- **Props vs. context** shows where each component gets its data.
-- **Granularity** compares a too-coarse split, a just-right split, and a too-fine split.
-
-Click any outlined box to see why it's a component and where its boundary sits. The
-role switcher shows `<Can>` hiding and showing buttons live.
+```
+src/
+├─ main.jsx
+├─ App.jsx
+├─ data/fakeApi.js
+├─ components/
+│  ├─ Header.jsx        layout
+│  ├─ UserMenu.jsx      feature
+│  ├─ PostList.jsx      feature
+│  ├─ ProfileCard.jsx   feature
+│  ├─ LoginScreen.jsx   feature
+│  ├─ PostCard.jsx      presentational
+│  ├─ Avatar.jsx        presentational
+│  ├─ Button.jsx        presentational
+│  └─ Tag.jsx           presentational
+└─ auth/                you create this
+   ├─ AuthContext.jsx
+   └─ Can.jsx
+```
 
 ## For teachers
 
-Start with [`teacher/LESSON_PLAN.md`](teacher/LESSON_PLAN.md). Everything in
-`teacher/`, including the solution, is visible to anyone who forks this repo. If you
-don't want students to see it, keep `teacher/` in a separate private repo.
+Start with [`teacher/LESSON_PLAN.md`](teacher/LESSON_PLAN.md). To see the finished app, copy
+`teacher/solution/src/` over `src/`, or swap in one file at a time to help a stuck student.
+
+Anyone who forks this repo can see the `teacher/` folder. If you don't want students to see
+the solution, keep `teacher/` in a separate private repo.
 
 Built with React 19 and Vite 5.

@@ -9,13 +9,11 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
 /* Base reset (the hosted version gets this from its host) */
-html { color-scheme: light; }
 body { margin: 0; }
 [hidden] { display: none !important; }
-img { max-width: 100%; }
 
-/* Layout: a lab bench. Controls on top, the specimen (a mock app) on the left,
-   the inspector on the right, then the rules students take away. */
+/* Layout: a lab bench. Controls on top, the specimen (the lesson's Team Blog app)
+   on the left, the inspector and component tree on the right, takeaways below. */
 :root {
   --bg: #eef0f3;
   --panel: #ffffff;
@@ -29,19 +27,17 @@ img { max-width: 100%; }
   --k-layout: #7b8494;
   --k-feature: #d9480f;
   --k-pres: #1c7ed6;
-  --k-prim: #2b8a3e;
   --k-logic: #8b3dff;
-  --k-fine: #c2255c;
   --k-single: #b4bac5;
 
-  /* data sources */
+  /* where data comes from */
   --d-props: #1c7ed6;
+  --d-pass: #e8590c;
   --d-context: #8b3dff;
-  --d-state: #e67700;
-  --d-children: #7b8494;
+  --d-state: #2b8a3e;
   --d-none: #b4bac5;
 
-  /* the mock app's own look */
+  /* the specimen's own look (matches src/styles.css) */
   --m-bg: #f7f7f5;
   --m-surface: #ffffff;
   --m-ink: #22262e;
@@ -60,8 +56,8 @@ img { max-width: 100%; }
   :root:not([data-theme="light"]) {
     --bg: #101318; --panel: #181c23; --ink: #e7eaf0; --muted: #9aa3b1; --line: #2a303a;
     --accent: #7f9dff; --accent-ink: #0d1020;
-    --k-layout: #8e97a8; --k-feature: #ff8a4c; --k-pres: #5aa9ff; --k-prim: #5fcf78; --k-logic: #b48cff; --k-fine: #ff6b9a; --k-single: #4a5160;
-    --d-props: #5aa9ff; --d-context: #b48cff; --d-state: #ffb340; --d-children: #8e97a8; --d-none: #4a5160;
+    --k-layout: #8e97a8; --k-feature: #ff8a4c; --k-pres: #5aa9ff; --k-logic: #b48cff; --k-single: #4a5160;
+    --d-props: #5aa9ff; --d-pass: #ff8a4c; --d-context: #b48cff; --d-state: #5fcf78; --d-none: #4a5160;
     --m-bg: #1d2129; --m-surface: #252a33; --m-ink: #e4e7ec; --m-muted: #9aa1ad; --m-line: #343a45;
     --m-brand: #2dd4bf; --m-brand-ink: #062a26; --m-danger: #ff6b6b; --m-chip: #2c333d;
     color-scheme: dark;
@@ -70,8 +66,8 @@ img { max-width: 100%; }
 :root[data-theme="dark"] {
   --bg: #101318; --panel: #181c23; --ink: #e7eaf0; --muted: #9aa3b1; --line: #2a303a;
   --accent: #7f9dff; --accent-ink: #0d1020;
-  --k-layout: #8e97a8; --k-feature: #ff8a4c; --k-pres: #5aa9ff; --k-prim: #5fcf78; --k-logic: #b48cff; --k-fine: #ff6b9a; --k-single: #4a5160;
-  --d-props: #5aa9ff; --d-context: #b48cff; --d-state: #ffb340; --d-children: #8e97a8; --d-none: #4a5160;
+  --k-layout: #8e97a8; --k-feature: #ff8a4c; --k-pres: #5aa9ff; --k-logic: #b48cff; --k-single: #4a5160;
+  --d-props: #5aa9ff; --d-pass: #ff8a4c; --d-context: #b48cff; --d-state: #5fcf78; --d-none: #4a5160;
   --m-bg: #1d2129; --m-surface: #252a33; --m-ink: #e4e7ec; --m-muted: #9aa1ad; --m-line: #343a45;
   --m-brand: #2dd4bf; --m-brand-ink: #062a26; --m-danger: #ff6b6b; --m-chip: #2c333d;
   color-scheme: dark;
@@ -83,14 +79,14 @@ body {
   font: 15px/1.55 var(--f-body);
   padding-inline: 20px; padding-block: 28px 56px;
 }
-.wrap { max-width: 1320px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
-code, .mono { font-family: var(--f-mono); font-size: 0.86em; }
+.wrap { max-width: 1280px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+code, .mono { font-family: var(--f-mono); font-size: 0.88em; }
 
 /* ---------- Intro ---------- */
 .intro { display: flex; flex-direction: column; gap: 6px; }
 .eyebrow { font: 500 12px/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 h1 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--f-display); letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
-.lead { margin: 4px 0 0; max-width: 68ch; color: var(--muted); }
+.lead { margin: 4px 0 0; max-width: 70ch; color: var(--muted); }
 
 /* ---------- Controls ---------- */
 .controls { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: end; }
@@ -103,7 +99,8 @@ h1 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--f-display); letter-spacing: -
 }
 .seg button:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
 .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
-.seg button:focus-visible, .toggle:focus-visible, .tree-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.seg button:focus-visible, .toggle input:focus-visible, .tree-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.seg.version button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
 .toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; padding: 8px 2px; }
 .toggle input { accent-color: var(--accent); width: 16px; height: 16px; }
 
@@ -117,13 +114,11 @@ h1 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--f-display); letter-spacing: -
 /* ---------- Bench ---------- */
 .bench { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 18px; align-items: start; }
 @media (max-width: 1000px) { .bench { grid-template-columns: minmax(0, 1fr); } }
-
 .specimen { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.scroller { overflow-x: auto; padding: 22px 14px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+.scroller { overflow-x: auto; padding: 24px 14px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
 .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; color: var(--muted); }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .legend i { width: 12px; height: 12px; border-radius: 3px; border: 2px solid var(--sw); display: inline-block; }
-.legend i.dash { border-style: dashed; }
 
 .inspector { display: flex; flex-direction: column; gap: 14px; min-width: 0; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
 @media (max-width: 1000px) { .inspector { position: static; } }
@@ -131,14 +126,15 @@ h1 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--f-display); letter-spacing: -
 .card h2 { font: 700 20px/1.15 var(--f-display); margin: 0; letter-spacing: -0.01em; }
 .card h3 { font: 500 11px/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 4px 0 0; }
 .card p { margin: 0; }
-.sig { font: 13px/1.4 var(--f-mono); background: var(--bg); border-radius: 7px; padding: 8px 10px; overflow-x: auto; white-space: pre; }
+.file { font: 13px/1.3 var(--f-mono); color: var(--muted); }
+.sig { font: 13px/1.45 var(--f-mono); background: var(--bg); border-radius: 7px; padding: 8px 10px; overflow-x: auto; white-space: pre; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { font: 500 12px/1 var(--f-body); padding: 5px 8px; border-radius: 999px; border: 1.5px solid var(--cc); color: var(--ink); background: color-mix(in srgb, var(--cc) 12%, transparent); }
 .count { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 14px; }
 .empty { color: var(--muted); }
 
 .tree { margin: 0; padding: 0; list-style: none; font: 13px/1.3 var(--f-mono); }
-.tree ul { list-style: none; margin: 0; padding-left: 14px; border-left: 1px solid var(--line); margin-left: 6px; }
+.tree ul { list-style: none; margin: 0 0 0 6px; padding-left: 14px; border-left: 1px solid var(--line); }
 .tree-btn {
   display: flex; align-items: center; gap: 6px; width: 100%; text-align: left;
   background: transparent; border: 0; color: var(--ink); font: inherit; padding: 4px 6px; border-radius: 5px; cursor: pointer;
@@ -147,96 +143,71 @@ h1 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--f-display); letter-spacing: -
 .tree-btn.sel { background: color-mix(in srgb, var(--tc) 22%, transparent); font-weight: 500; }
 .tree-btn i { width: 8px; height: 8px; border-radius: 2px; background: var(--tc); flex: none; }
 .tree-btn em { font-style: normal; color: var(--muted); }
-.tree-scroll { max-height: 420px; overflow: auto; }
+.tree-scroll { max-height: 380px; overflow: auto; }
 
 /* ---------- Takeaways ---------- */
+.section-title { font: 700 26px/1.1 var(--f-display); margin: 10px 0 0; letter-spacing: -0.01em; }
 .rules { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 @media (max-width: 900px) { .rules { grid-template-columns: minmax(0, 1fr); } }
 .rules h2 { font-size: 19px; }
 .rules ol, .rules ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
-.section-title { font: 700 26px/1.1 var(--f-display); margin: 10px 0 0; letter-spacing: -0.01em; }
 .vs { width: 100%; border-collapse: collapse; font-size: 14px; }
 .vs th, .vs td { text-align: left; padding: 7px 6px; border-top: 1px solid var(--line); vertical-align: top; }
 .vs th { font: 500 11px/1.2 var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); border-top: 0; }
 
 /* =========================================================
-   The specimen: a mock team-blog app called Quill
+   The specimen: the lesson's Team Blog app
    ========================================================= */
-.m-app { min-width: 760px; background: var(--m-bg); color: var(--m-ink); font: 13px/1.45 var(--f-body); border-radius: 10px; border: 1px solid var(--m-line); }
+.m-window { min-width: 700px; background: var(--m-bg); color: var(--m-ink); font: 13px/1.45 var(--f-body); border-radius: 10px; border: 1px solid var(--m-line); }
 .m-chrome { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--m-line); font: 12px var(--f-mono); color: var(--m-muted); }
 .m-chrome b { width: 10px; height: 10px; border-radius: 50%; background: var(--m-line); display: inline-block; }
 .m-chrome span { margin-left: 8px; background: var(--m-surface); border: 1px solid var(--m-line); border-radius: 6px; padding: 3px 10px; }
-.m-provider { display: flex; flex-direction: column; padding: 4px; }
+.m-root { padding: 6px; display: flex; flex-direction: column; }
+.m-app { display: flex; flex-direction: column; min-height: 420px; }
 
-.m-header { display: flex; align-items: center; gap: 18px; padding: 10px 14px; background: var(--m-surface); border-bottom: 1px solid var(--m-line); border-radius: 8px 8px 0 0; }
-.m-logo { display: inline-flex; align-items: center; gap: 7px; font: 700 17px/1 var(--f-display); color: var(--m-ink); text-decoration: none; }
+.m-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 16px; background: var(--m-surface); border-bottom: 1px solid var(--m-line); }
+.m-logo { display: inline-flex; align-items: center; gap: 7px; font: 700 16px/1 var(--f-body); color: var(--m-ink); }
 .m-logo-mark { width: 18px; height: 18px; border-radius: 5px 5px 5px 0; background: var(--m-brand); display: inline-block; }
-.m-nav { display: flex; gap: 4px; }
-.m-navlink { color: var(--m-muted); text-decoration: none; padding: 5px 9px; border-radius: 6px; }
-.m-navlink.active { color: var(--m-ink); background: var(--m-chip); font-weight: 600; }
-.m-search { flex: 1; display: flex; }
-.m-search input { width: 100%; max-width: 260px; font: inherit; color: var(--m-ink); background: var(--m-bg); border: 1px solid var(--m-line); border-radius: 7px; padding: 6px 10px; }
 .m-usermenu { position: relative; display: inline-flex; }
 .m-avatar-btn { background: none; border: 0; padding: 0; cursor: pointer; display: inline-flex; border-radius: 50%; }
-.m-avatar { --s: 30px; width: var(--s); height: var(--s); border-radius: 50%; display: inline-grid; place-items: center; font: 600 calc(var(--s) * 0.38)/1 var(--f-body); color: #fff; background: var(--av, #6366f1); flex: none; }
-.m-avatar.sm { --s: 28px; }
-.m-avatar.lg { --s: 52px; }
-.m-dropdown { position: absolute; right: 0; top: calc(100% + 8px); width: 200px; background: var(--m-surface); border: 1px solid var(--m-line); border-radius: 9px; box-shadow: 0 8px 24px rgba(0,0,0,0.14); z-index: 5; display: flex; flex-direction: column; padding: 4px; }
+.m-avatar { width: 30px; height: 30px; border-radius: 50%; display: inline-grid; place-items: center; font: 600 11px/1 var(--f-body); color: #fff; background: var(--av, #6366f1); flex: none; }
+.m-avatar.lg { width: 50px; height: 50px; font-size: 18px; }
+.m-dropdown { position: absolute; right: 0; top: calc(100% + 8px); width: 210px; background: var(--m-surface); border: 1px solid var(--m-line); border-radius: 9px; box-shadow: 0 8px 24px rgba(0,0,0,0.16); z-index: 5; display: flex; flex-direction: column; padding: 4px; }
 .m-dd-head { padding: 8px 10px; border-bottom: 1px solid var(--m-line); margin-bottom: 4px; display: flex; flex-direction: column; }
 .m-dd-head small { color: var(--m-muted); }
 .m-menuitem { display: block; width: 100%; text-align: left; font: inherit; color: var(--m-ink); background: none; border: 0; padding: 7px 10px; border-radius: 6px; cursor: pointer; }
 .m-menuitem:hover { background: var(--m-chip); }
+.m-muted { color: var(--m-muted); }
 
-.m-body { display: grid; grid-template-columns: 160px minmax(0, 1fr) 200px; gap: 14px; padding: 14px; }
-.m-sidebar { display: flex; flex-direction: column; gap: 2px; }
-.m-sideitem { display: flex; align-items: center; gap: 8px; padding: 7px 9px; border-radius: 7px; color: var(--m-ink); }
-.m-sideitem.active { background: var(--m-chip); font-weight: 600; }
-.m-sideitem .ico { width: 14px; height: 14px; border-radius: 4px; border: 1.5px solid var(--m-muted); flex: none; }
-.m-sideitem .lbl { flex: 1; }
-.m-badge { font: 600 11px/1 var(--f-body); background: var(--m-brand); color: var(--m-brand-ink); border-radius: 999px; padding: 3px 7px; font-variant-numeric: tabular-nums; }
-
-.m-main { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.m-page { display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 16px; padding: 16px; align-items: start; }
+.m-postlist { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .m-pagehead { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.m-pagehead h2 { font: 700 18px/1.2 var(--f-display); margin: 0; }
-.m-postlist { display: flex; flex-direction: column; gap: 10px; }
-.m-post { background: var(--m-surface); border: 1px solid var(--m-line); border-radius: 9px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.m-pagehead h2 { font: 700 17px/1.2 var(--f-body); margin: 0; }
+.m-post { background: var(--m-surface); border: 1px solid var(--m-line); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
 .m-post-top { display: flex; gap: 10px; align-items: center; }
 .m-post h3 { font: 600 14px/1.3 var(--f-body); margin: 0; }
-.m-post-meta { color: var(--m-muted); font-size: 12px; }
-.m-post p { margin: 0; color: var(--m-ink); }
+.m-small { font-size: 12px; }
+.m-post p { margin: 0; }
 .m-post-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
-.m-tags, .m-actions { display: flex; gap: 6px; align-items: center; }
+.m-row { display: flex; gap: 6px; align-items: center; }
 .m-tag { font: 12px/1 var(--f-mono); background: var(--m-chip); color: var(--m-muted); border-radius: 5px; padding: 4px 7px; }
 .m-btn { font: 500 12px/1 var(--f-body); border-radius: 6px; padding: 7px 11px; border: 1px solid var(--m-line); background: var(--m-surface); color: var(--m-ink); cursor: pointer; }
 .m-btn.primary { background: var(--m-brand); border-color: var(--m-brand); color: var(--m-brand-ink); }
 .m-btn.danger { color: var(--m-danger); }
-.m-fallback { font-size: 12px; color: var(--m-muted); font-style: italic; }
 .m-can { display: inline-flex; }
-
-.m-rail { display: flex; flex-direction: column; gap: 12px; }
-.m-panel { background: var(--m-surface); border: 1px solid var(--m-line); border-radius: 9px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
-.m-panel h4 { margin: 0; font: 600 12px/1 var(--f-body); color: var(--m-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.m-profile { background: var(--m-surface); border: 1px solid var(--m-line); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
 .m-profile-top { display: flex; gap: 10px; align-items: center; }
-.m-profile-top small { display: block; color: var(--m-muted); }
-.m-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
-.m-stat { display: flex; flex-direction: column; align-items: center; }
-.m-stat .v { font: 700 16px/1.1 var(--f-display); font-variant-numeric: tabular-nums; }
-.m-stat .l { font-size: 11px; color: var(--m-muted); }
-.m-userrow { display: flex; align-items: center; gap: 8px; }
-.m-userrow .name { flex: 1; font-weight: 500; }
-.m-footer { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-top: 1px solid var(--m-line); color: var(--m-muted); font-size: 12px; }
-.m-footer .m-logo { font-size: 14px; }
-.m-footer .m-logo-mark { width: 14px; height: 14px; }
+.m-pill { align-self: flex-start; font-size: 11px; font-weight: 600; text-transform: capitalize; background: var(--m-chip); border-radius: 999px; padding: 3px 9px; }
+.m-login { width: 340px; margin: 48px auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; background: var(--m-surface); border: 1px solid var(--m-line); border-radius: 10px; }
+.m-login h2 { font: 700 17px/1.2 var(--f-body); margin: 0; }
 
 /* =========================================================
-   Lens overlays: outlines, labels, tags
+   Lens overlays
    ========================================================= */
 .stage .is-c { position: relative; outline: 1.5px solid var(--c); outline-offset: -1px; cursor: pointer; }
-.stage .is-c.fine { outline-style: dashed; }
-.stage .m-provider.is-c { outline-style: dashed; outline-width: 2px; outline-offset: -2px; }
+.stage .m-root.is-c { outline-style: dashed; outline-width: 2px; outline-offset: -2px; }
 .stage .is-c.hov { outline-width: 2.5px; background-color: color-mix(in srgb, var(--c) 8%, transparent); }
 .stage .is-c.sel { outline-width: 3px; background-color: color-mix(in srgb, var(--c) 14%, transparent); }
-
 .stage .is-c::before {
   content: attr(data-c); display: none;
   position: absolute; left: -1px; top: 0; transform: translateY(-100%);
@@ -245,20 +216,12 @@ h1 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--f-display); letter-spacing: -
 }
 .stage.labels-all .is-c::before, .stage .is-c.hov::before, .stage .is-c.sel::before { display: block; }
 .stage .is-c.hov::before, .stage .is-c.sel::before { z-index: 8; }
-
-/* data lens: mark components that call useAuth() */
-.stage[data-lens="data"] .is-c.uses-ctx::after {
-  content: "useAuth()"; position: absolute; right: -1px; top: 0; transform: translateY(-100%);
-  font: 500 10px/1 var(--f-mono); padding: 3px 5px; border-radius: 4px 4px 0 0;
-  background: var(--d-context); color: var(--bg); z-index: 7; pointer-events: none;
-}
-/* Can components that are hiding their child */
-.stage .is-c.denied { min-width: 54px; min-height: 26px; align-items: center; justify-content: center; }
-.stage .is-c.denied::after, .stage[data-lens="data"] .is-c.denied::after {
-  content: "hidden"; position: static; transform: none; background: none; color: var(--c);
-  font: 500 10px/1 var(--f-mono); padding: 0 6px;
-}
-.stage:not(.outlined) .denied { display: none !important; }
+/* breathing room so nested outlines don't sit on top of each other */
+.stage .m-can.is-c { padding: 3px; border-radius: 8px; }
+.stage .m-postlist.is-c, .stage .m-app.is-c > .m-page { padding: 6px; }
+/* a <Can> that is hiding its button still shows where it sits */
+.stage .is-c.denied { min-width: 52px; min-height: 26px; align-items: center; justify-content: center; }
+.stage .is-c.denied::after { content: "hidden"; font: 500 10px/1 var(--f-mono); color: var(--c); padding: 0 6px; }
 @media (prefers-reduced-motion: no-preference) {
   .stage .is-c { transition: outline-color 160ms ease, background-color 160ms ease; }
 }
@@ -271,29 +234,27 @@ h1 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--f-display); letter-spacing: -
   <header class="intro">
     <div class="eyebrow">React · Component boundaries</div>
     <h1>Component Anatomy Lab</h1>
-    <p class="lead">The page below is a small team blog, built the way you would build it in React. Switch lenses to see where each component starts and ends, which pieces are reused, where each one gets its data, and how fine-grained the split should be. Click any outlined box to inspect it.</p>
+    <p class="lead">This is the Team Blog app from today's lesson. Every outlined box is one React component, and one file in <code>src/components</code>. Switch lenses to see what kind each component is, which ones are reused, and where each gets its data. Flip between the starter code and the finished code to see what the refactor changes. Click any box to inspect it.</p>
   </header>
 
   <div class="controls">
     <div class="ctl">
       <span class="ctl-label" id="lens-label">Lens</span>
       <div class="seg" role="group" aria-labelledby="lens-label" id="lens">
-        <button type="button" data-v="boundaries" aria-pressed="true">Boundaries</button>
+        <button type="button" data-v="kind" aria-pressed="true">What kind?</button>
         <button type="button" data-v="reuse" aria-pressed="false">Reuse</button>
-        <button type="button" data-v="data" aria-pressed="false">Props vs. context</button>
-        <button type="button" data-v="granularity" aria-pressed="false">Granularity</button>
-      </div>
-    </div>
-    <div class="ctl" id="gran-ctl" hidden>
-      <span class="ctl-label" id="gran-label">Split</span>
-      <div class="seg" role="group" aria-labelledby="gran-label" id="gran">
-        <button type="button" data-v="coarse" aria-pressed="false">Too coarse</button>
-        <button type="button" data-v="right" aria-pressed="true">Just right</button>
-        <button type="button" data-v="fine" aria-pressed="false">Too fine</button>
+        <button type="button" data-v="data" aria-pressed="false">Data flow</button>
       </div>
     </div>
     <div class="ctl">
-      <span class="ctl-label" id="role-label">Signed in as</span>
+      <span class="ctl-label" id="ver-label">Code</span>
+      <div class="seg version" role="group" aria-labelledby="ver-label" id="version">
+        <button type="button" data-v="starter" aria-pressed="true">Starter</button>
+        <button type="button" data-v="finished" aria-pressed="false">Finished</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <span class="ctl-label" id="role-label">Sign in as</span>
       <div class="seg" role="group" aria-labelledby="role-label" id="role">
         <button type="button" data-v="viewer" aria-pressed="false">Viewer</button>
         <button type="button" data-v="editor" aria-pressed="true">Editor</button>
@@ -303,80 +264,15 @@ h1 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--f-display); letter-spacing: -
     <label class="toggle" for="labels-toggle"><input type="checkbox" id="labels-toggle"> Label every component</label>
   </div>
 
-  <div class="prompt"><strong id="prompt-tag">Ask the class</strong><span id="prompt-text"></span></div>
+  <div class="prompt"><strong>Ask the class</strong><span id="prompt-text"></span></div>
 
   <div class="bench">
     <div class="specimen">
       <div class="scroller">
-        <div class="stage outlined" id="stage" data-lens="boundaries">
-          <div class="m-app" data-c="App" data-lv="coarse">
-            <div class="m-chrome"><b></b><b></b><b></b><span>quill.app/team</span></div>
-            <div class="m-provider" data-c="AuthProvider" data-lv="coarse">
-              <header class="m-header" data-c="Header" data-lv="coarse">
-                <a href="#" class="m-logo" data-c="Logo"><span class="m-logo-mark"></span><span data-c="LogoText" data-lv="fine">Quill</span></a>
-                <nav class="m-nav">
-                  <a href="#" class="m-navlink active" data-c="NavLink">Home</a>
-                  <a href="#" class="m-navlink" data-c="NavLink">Drafts</a>
-                  <a href="#" class="m-navlink" data-c="NavLink">Team</a>
-                </nav>
-                <div class="m-search" data-c="SearchBar"><input id="m-search" type="search" placeholder="Search posts" aria-label="Search posts in the example app"></div>
-                <div class="m-usermenu" data-c="UserMenu">
-                  <button type="button" class="m-avatar-btn" id="avatar-btn" aria-haspopup="menu" aria-expanded="false" aria-label="Open the example user menu">
-                    <span class="m-avatar" data-c="Avatar" data-user="Jane Doe"><span data-c="AvatarInitials" data-lv="fine">JD</span></span>
-                  </button>
-                  <div class="m-dropdown" id="dropdown" role="menu" hidden>
-                    <div class="m-dd-head"><strong>Jane Doe</strong><small>jane@quill.app</small><small class="role-text">Editor</small></div>
-                    <button type="button" class="m-menuitem" data-c="MenuItem">Profile</button>
-                    <span class="m-can" data-c="Can" data-perm="settings:edit"><button type="button" class="m-menuitem" data-c="MenuItem">Settings</button></span>
-                    <span class="m-can" data-c="Can" data-perm="users:manage"><button type="button" class="m-menuitem" data-c="MenuItem">Manage users</button></span>
-                    <button type="button" class="m-menuitem" data-c="MenuItem">Log out</button>
-                  </div>
-                </div>
-              </header>
-
-              <div class="m-body">
-                <aside class="m-sidebar" data-c="Sidebar" data-lv="coarse">
-                  <div class="m-sideitem active" data-c="SidebarItem"><span class="ico"></span><span class="lbl">All posts</span><span class="m-badge" data-c="Badge">24</span></div>
-                  <div class="m-sideitem" data-c="SidebarItem"><span class="ico"></span><span class="lbl">My posts</span><span class="m-badge" data-c="Badge">6</span></div>
-                  <div class="m-sideitem" data-c="SidebarItem"><span class="ico"></span><span class="lbl">Drafts</span><span class="m-badge" data-c="Badge">2</span></div>
-                  <div class="m-sideitem" data-c="SidebarItem"><span class="ico"></span><span class="lbl">Archived</span></div>
-                </aside>
-
-                <main class="m-main" data-c="Main" data-lv="coarse">
-                  <div class="m-pagehead" data-c="PageHeader">
-                    <h2>Team posts</h2>
-                    <span class="m-can" data-c="Can" data-perm="posts:write" data-fallback="Read-only access"><button type="button" class="m-btn primary" data-c="Button">+ New post</button></span>
-                  </div>
-                  <div class="m-postlist" data-c="PostList" id="postlist"></div>
-                </main>
-
-                <aside class="m-rail" data-c="RightRail" data-lv="coarse">
-                  <section class="m-panel" data-c="ProfileCard">
-                    <div class="m-profile-top">
-                      <span class="m-avatar lg" data-c="Avatar" data-user="Jane Doe"><span data-c="AvatarInitials" data-lv="fine">JD</span></span>
-                      <div><strong>Jane Doe</strong><small class="role-text">Editor</small></div>
-                    </div>
-                    <div class="m-stats">
-                      <div class="m-stat" data-c="Stat"><span class="v" data-c="StatValue" data-lv="fine">6</span><span class="l" data-c="StatLabel" data-lv="fine">Posts</span></div>
-                      <div class="m-stat" data-c="Stat"><span class="v" data-c="StatValue" data-lv="fine">2</span><span class="l" data-c="StatLabel" data-lv="fine">Drafts</span></div>
-                      <div class="m-stat" data-c="Stat"><span class="v" data-c="StatValue" data-lv="fine">48</span><span class="l" data-c="StatLabel" data-lv="fine">Followers</span></div>
-                    </div>
-                  </section>
-                  <section class="m-panel" data-c="WhoToFollow" id="follow"></section>
-                </aside>
-              </div>
-
-              <footer class="m-footer" data-c="Footer" data-lv="coarse">
-                <a href="#" class="m-logo" data-c="Logo"><span class="m-logo-mark"></span><span data-c="LogoText" data-lv="fine">Quill</span></a>
-                <span>Example app for teaching. Not a real product.</span>
-              </footer>
-            </div>
-          </div>
-        </div>
+        <div class="stage labels-off" id="stage"></div>
       </div>
       <div class="legend" id="legend"></div>
     </div>
-
     <aside class="inspector">
       <div class="card" id="detail" aria-live="polite"></div>
       <div class="card">
@@ -386,45 +282,42 @@ h1 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--f-display); letter-spacing: -
     </aside>
   </div>
 
-  <h2 class="section-title">Rules students take away</h2>
+  <h2 class="section-title">Rules to take away</h2>
   <div class="rules">
     <div class="card">
       <h2>Should this be a component?</h2>
-      <p>Extract it when you can say yes to at least one:</p>
+      <p>Make it one when at least one of these is true:</p>
       <ol>
         <li><strong>It repeats.</strong> Avatar, Button, PostCard.</li>
         <li><strong>It has one job you can name.</strong> If the name needs "and", split it.</li>
-        <li><strong>It owns state nobody else needs.</strong> SearchBar's keystrokes, UserMenu's open/closed.</li>
-        <li><strong>You'd change or test it on its own.</strong> PostCard with a fake post.</li>
-        <li><strong>The product has a word for it.</strong> "Profile card", "who to follow".</li>
+        <li><strong>It owns state nobody else needs.</strong> UserMenu's open or closed.</li>
+        <li><strong>You'd test or change it on its own.</strong> PostCard with a fake post.</li>
       </ol>
     </div>
     <div class="card">
       <h2>Props or context?</h2>
       <table class="vs">
-        <thead><tr><th>Use props when</th><th>Use context when</th></tr></thead>
+        <thead><tr><th>Props</th><th>Context</th></tr></thead>
         <tbody>
           <tr><td>The parent already has the data</td><td>Many distant components need it</td></tr>
-          <tr><td>It's one or two levels down</td><td>Passing it would cross layers that ignore it</td></tr>
-          <tr><td>The component should show <em>any</em> item (Avatar, PostCard)</td><td>It's app-wide: signed-in user, theme, language</td></tr>
-          <tr><td>You want it easy to reuse and test</td><td>It changes rarely, so re-renders stay cheap</td></tr>
+          <tr><td>The component should show <em>any</em> item, like Avatar or PostCard</td><td>It's app-wide, like the signed-in user or the theme</td></tr>
+          <tr><td>You want it easy to reuse and test</td><td>Passing it would cross components that ignore it</td></tr>
         </tbody>
       </table>
     </div>
     <div class="card">
-      <h2>Two smells to spot</h2>
+      <h2>Too big or too small?</h2>
       <h3>Too coarse</h3>
       <ul>
         <li>The same markup pasted in several places</li>
-        <li>A file over ~200 lines with several jobs</li>
-        <li>You can't test one piece without the whole page</li>
+        <li>One file doing several jobs</li>
       </ul>
       <h3>Too fine</h3>
       <ul>
-        <li>A component that wraps one tag and passes one prop</li>
-        <li>Names like <code>PostTitleWrapper</code> or <code>DivContainer</code></li>
+        <li>A component that wraps one tag, like a <code>PostTitle</code> that is only an <code>&lt;h3&gt;</code></li>
         <li>Opening five files to understand one card</li>
       </ul>
+      <p>That's why the menu items in UserMenu are plain <code>&lt;button&gt;</code> tags and not their own component.</p>
     </div>
   </div>
 </div>
@@ -433,271 +326,259 @@ h1 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--f-display); letter-spacing: -
 (function () {
   "use strict";
 
-  /* ---------- Example data for the mock app ---------- */
+  /* ---------- The same data the app uses (src/data/fakeApi.js) ---------- */
+  var USER = { name: "Jane Doe", email: "jane@teamblog.dev" };
   var POSTS = [
-    { author: "Ana Ruiz", date: "Oct 2", title: "Moving our auth into a context provider", excerpt: "We were passing the user through six layers. Here's what changed when we stopped.", tags: ["react", "context"] },
-    { author: "Malik Osei", date: "Sep 29", title: "One Button component to rule them all", excerpt: "Fourteen button styles became one component with three variants.", tags: ["design-system"] },
-    { author: "Priya Nair", date: "Sep 25", title: "When not to split a component", excerpt: "A title inside a card doesn't need its own file. A few rules we use in review.", tags: ["react", "review"] }
+    { id: 1, author: "Ana Ruiz", date: "Oct 2", title: "Moving our auth into a context provider", excerpt: "We were passing the user through six layers. Here's what changed when we stopped.", tags: ["react", "context"] },
+    { id: 2, author: "Malik Osei", date: "Sep 29", title: "One Button component to rule them all", excerpt: "Fourteen button styles became one component with three variants.", tags: ["design-system"] },
+    { id: 3, author: "Priya Nair", date: "Sep 25", title: "When not to split a component", excerpt: "A title inside a card doesn't need its own file. A few rules we use in review.", tags: ["react", "review"] }
   ];
-  var SUGGESTED = ["Tom Becker", "Lena Park", "Sam Ortiz"];
-
   var ROLE_PERMS = {
     viewer: ["posts:read"],
     editor: ["posts:read", "posts:write", "settings:edit"],
-    admin: ["posts:read", "posts:write", "posts:delete", "users:manage", "settings:edit"]
+    admin: ["posts:read", "posts:write", "posts:delete", "settings:edit", "users:manage"]
   };
 
-  /* ---------- What each component is, and why ---------- */
+  /* ---------- Legend vocabularies ---------- */
   var KIND = {
     layout: { label: "Layout", color: "var(--k-layout)" },
-    feature: { label: "Feature (connected)", color: "var(--k-feature)" },
-    pres: { label: "Presentational", color: "var(--k-pres)" },
-    prim: { label: "Primitive", color: "var(--k-prim)" },
-    logic: { label: "Logic only, no UI", color: "var(--k-logic)" },
-    fine: { label: "Too fine", color: "var(--k-fine)" }
+    feature: { label: "Feature (has data)", color: "var(--k-feature)" },
+    pres: { label: "Presentational (props only)", color: "var(--k-pres)" },
+    logic: { label: "Logic only, no UI", color: "var(--k-logic)" }
   };
   var DATA = {
     props: { label: "Props", color: "var(--d-props)" },
+    pass: { label: "Props it only passes along", color: "var(--d-pass)" },
     context: { label: "Context (useAuth)", color: "var(--d-context)" },
-    state: { label: "Local state", color: "var(--d-state)" },
-    children: { label: "Children only", color: "var(--d-children)" },
-    provides: { label: "Provides context", color: "var(--d-context)" },
-    none: { label: "Nothing (static)", color: "var(--d-none)" }
+    state: { label: "Its own state", color: "var(--d-state)" },
+    none: { label: "No data", color: "var(--d-none)" }
   };
 
-  function fine(parent, what) {
-    return { kind: "fine", data: ["none"], sig: "<" + what + " />",
-      why: "Just " + parent + " markup pulled into its own component.",
-      boundary: "It wraps a single tag. There's no reuse, no state, and no logic, so it adds a file and an import without adding meaning. Keep it as plain JSX inside " + parent + "." };
-  }
-
+  /* ---------- One entry per file in the project ---------- */
   var META = {
-    App: { kind: "layout", data: ["children"], sig: "<App />",
-      why: "The root. It lays out the page's regions and mounts providers once, at the top.",
-      boundary: "It holds no data of its own. If App started fetching posts, that logic would belong lower, next to where posts are shown." },
-    AuthProvider: { kind: "logic", data: ["provides"], sig: "<AuthProvider>{children}</AuthProvider>",
-      why: "Owns the signed-in user and their permissions, and broadcasts them to everything inside it. It draws nothing on screen.",
-      boundary: "It wraps the whole app because the header, posts, and profile all need auth. A provider should wrap only as much of the tree as needs its value." },
-    Header: { kind: "layout", data: ["children"], sig: "<Header />",
-      why: "A page region that arranges the logo, navigation, search, and user menu.",
-      boundary: "It reads no auth and keeps no state. It only positions its children, so a header redesign touches one file." },
-    Logo: { kind: "pres", data: ["none"], sig: "<Logo />",
-      why: "The brand mark appears in the header and the footer. One definition keeps them identical.",
-      boundary: "If the footer needs a smaller logo, add a size prop. Don't create a second logo component." },
-    LogoText: fine("Logo", "LogoText"),
-    NavLink: { kind: "prim", data: ["props"], sig: "<NavLink href=\"/drafts\" active={false}>\n  Drafts\n</NavLink>",
-      why: "Three links share the same look, hover, and active styling.",
-      boundary: "It knows nothing about routes or users. The parent tells it whether it's active." },
-    SearchBar: { kind: "feature", data: ["state"], sig: "<SearchBar onSearch={runSearch} />",
-      why: "Owns the text being typed. No other component needs every keystroke.",
-      boundary: "The query stays in local state, and only the final search is reported upward. Putting keystrokes in context would re-render the whole app on every letter." },
-    UserMenu: { kind: "feature", data: ["context", "state"], sig: "<UserMenu />",
-      why: "Shows who is signed in, plus their account actions. Click the avatar to open it.",
-      boundary: "Connected: it calls useAuth() for the user and logout. Whether the menu is open is local state, because only UserMenu cares." },
-    Avatar: { kind: "prim", data: ["props"], sig: "<Avatar user={user} size=\"sm\" />",
-      why: "The most reused piece on the page: header, every post, the profile card, and the follow list.",
-      boundary: "Presentational on purpose. If Avatar called useAuth(), it could only ever show the signed-in user, never a post's author." },
-    AvatarInitials: fine("Avatar", "AvatarInitials"),
-    MenuItem: { kind: "prim", data: ["props"], sig: "<MenuItem onClick={logout}>\n  Log out\n</MenuItem>",
-      why: "Every row in the dropdown shares padding, hover, and keyboard behavior.",
-      boundary: "It does one thing when clicked and doesn't know which menu it's in." },
-    Can: { kind: "logic", data: ["context"], sig: "<Can permission=\"posts:delete\">\n  <Button variant=\"danger\">Delete</Button>\n</Can>",
-      why: "Shows its children only when the signed-in user has a permission. Switch roles above to watch it work.",
-      boundary: "It reads permissions from context, so the components around it don't have to. That's why PostCard can stay presentational." },
-    Sidebar: { kind: "layout", data: ["children"], sig: "<Sidebar />",
-      why: "A page region holding the section links.",
-      boundary: "It only arranges SidebarItems. The counts come from data, not from Sidebar." },
-    SidebarItem: { kind: "prim", data: ["props"], sig: "<SidebarItem label=\"Drafts\" count={2} />",
-      why: "Four rows with the same icon, label, and count layout.",
-      boundary: "It takes its count as a prop. Where the number comes from is the parent's job." },
-    Badge: { kind: "prim", data: ["props"], sig: "<Badge count={24} />",
-      why: "A small count pill, reused wherever a number needs attention.",
-      boundary: "It renders nothing when the count is 0, so callers don't need an if-statement." },
-    Main: { kind: "layout", data: ["children"], sig: "<Main />",
-      why: "The central page region.",
-      boundary: "It arranges the page header and post list but owns no data itself." },
-    PageHeader: { kind: "pres", data: ["props"], sig: "<PageHeader\n  title=\"Team posts\"\n  actions={<NewPostButton />}\n/>",
-      why: "A title with a slot for actions. Every page in the app has one.",
-      boundary: "Actions arrive as a prop (a slot), so each page picks its own buttons without PageHeader knowing about permissions." },
-    Button: { kind: "prim", data: ["props"], sig: "<Button variant=\"danger\" onClick={onDelete}>\n  Delete\n</Button>",
-      why: "Every action on the page shares one set of styles, sizes, and focus rings.",
-      boundary: "No business logic. Whether a Delete button appears at all is decided around it, by Can." },
-    PostList: { kind: "feature", data: ["state"], sig: "<PostList />",
-      why: "Loads the posts and renders one PostCard for each.",
-      boundary: "It owns the post data because it's the only component that needs the whole list. Each card gets just its own post as a prop." },
-    PostCard: { kind: "pres", data: ["props"], sig: "<PostCard post={post} />",
-      why: "One post's layout, repeated for every item in the list.",
-      boundary: "It gets its post as a prop, so it works in the feed, in search results, or in a test with fake data. It never fetches data or reads auth." },
-    PostTitle: fine("PostCard", "PostTitle"),
-    PostMeta: fine("PostCard", "PostMeta"),
-    PostExcerpt: fine("PostCard", "PostExcerpt"),
-    Tag: { kind: "prim", data: ["props"], sig: "<Tag>react</Tag>",
+    AuthProvider: { kind: "logic", file: "src/auth/AuthContext.jsx",
+      why: "Owns the signed-in user and their permissions, and shares them with every component inside it. It draws nothing on screen.",
+      boundary: "It wraps the whole app in main.jsx because the header, the posts, and the profile card all need auth.",
+      finished: { data: ["context"], sig: "<AuthProvider>\n  <App />\n</AuthProvider>", note: "Provides the context value: user, login, logout, and hasPermission." } },
+    App: { kind: "layout", file: "src/App.jsx",
+      why: "The root of the page. It decides whether to show the login screen or the posts.",
+      boundary: "Once auth moves out, App only picks a screen. It no longer passes anything down.",
+      starter: { data: ["state"], sig: "<App />", note: "Owns user, loading, login, and logout, then hands them to every child that needs them, and some that don't." },
+      finished: { data: ["context"], sig: "<App />", note: "Reads user from useAuth() only to choose which screen to show." } },
+    Header: { kind: "layout", file: "src/components/Header.jsx",
+      why: "A page region that positions the logo and the user menu.",
+      boundary: "Layout components arrange their children. The logo stays plain JSX because it's one tag used in one place.",
+      starter: { data: ["pass"], sig: "<Header user={user} logout={logout} />", note: "Uses neither prop. It hands both straight to UserMenu. That's prop drilling." },
+      finished: { data: ["none"], sig: "<Header />", note: "No props and no data. A header redesign now touches only this file." } },
+    UserMenu: { kind: "feature", file: "src/components/UserMenu.jsx",
+      why: "The avatar button and its dropdown. Click the avatar to open it.",
+      boundary: "Whether the menu is open is local state, because no other component cares. The menu items are plain buttons: one tag each, so they aren't worth their own files.",
+      starter: { data: ["props", "state"], sig: "<UserMenu user={user} logout={logout} />", note: "Gets user and logout through Header, and checks role names like user.role === \"admin\" by hand." },
+      finished: { data: ["context", "state"], sig: "<UserMenu />", note: "Calls useAuth() for user and logout, and uses <Can> for the Settings and Manage users items." } },
+    Avatar: { kind: "pres", file: "src/components/Avatar.jsx",
+      why: "The most reused piece on the page: in the header, on every post, and on the profile card.",
+      boundary: "It takes a name as a prop instead of reading the signed-in user. That's what lets it show a post's author as easily as you.",
+      starter: { data: ["props"], sig: "<Avatar name={post.author} />", note: "Takes name and an optional size." },
+      finished: { data: ["props"], sig: "<Avatar name={post.author} />", note: "Unchanged. Presentational components don't need to know about context." } },
+    PostList: { kind: "feature", file: "src/components/PostList.jsx",
+      why: "Loads the posts and renders one PostCard per post.",
+      boundary: "It owns the posts because it's the only component that needs the whole list. Each card gets just its own post.",
+      starter: { data: ["pass", "state"], sig: "<PostList user={user} />", note: "Uses user for one role check, then passes it to every PostCard." },
+      finished: { data: ["state"], sig: "<PostList />", note: "Only owns its posts. <Can> handles the New post button." } },
+    PostCard: { kind: "pres", file: "src/components/PostCard.jsx",
+      why: "One post's layout, repeated for every post in the list.",
+      boundary: "It gets its post as a prop, so it works in the feed, in search results, or in a test with fake data. It never fetches data itself.",
+      starter: { data: ["props"], sig: "<PostCard post={post} user={user} />", note: "Needs user only to decide whether to show Edit and Delete." },
+      finished: { data: ["props"], sig: "<PostCard post={post} />", note: "Only needs its post. <Can> decides which buttons appear." } },
+    Tag: { kind: "pres", file: "src/components/Tag.jsx",
       why: "A topic label, repeated on every post.",
-      boundary: "It displays a word. Filtering by tag is the job of whoever owns the post list." },
-    RightRail: { kind: "layout", data: ["children"], sig: "<RightRail />",
-      why: "The right-hand page region.",
-      boundary: "It stacks two panels and owns nothing." },
-    ProfileCard: { kind: "feature", data: ["context"], sig: "<ProfileCard />",
-      why: "Summarizes the signed-in user next to the feed.",
-      boundary: "Connected: it calls useAuth() because it's always about the current user and sits far from where auth lives. It passes the user down to Avatar as a prop." },
-    Stat: { kind: "prim", data: ["props"], sig: "<Stat label=\"Posts\" value={6} />",
-      why: "A number with a label, repeated three times.",
-      boundary: "It just displays the numbers. ProfileCard decides which stats to show." },
-    StatValue: fine("Stat", "StatValue"),
-    StatLabel: fine("Stat", "StatLabel"),
-    WhoToFollow: { kind: "feature", data: ["state"], sig: "<WhoToFollow />",
-      why: "Suggests people and remembers who you just followed. Try a Follow button.",
-      boundary: "It owns its suggestions and follow state. Nothing else on the page needs them, so they stay local." },
-    UserRow: { kind: "pres", data: ["props"], sig: "<UserRow user={u} onFollow={follow} />",
-      why: "One suggested person: avatar, name, and a Follow button, repeated three times.",
-      boundary: "Presentational: it reports the click upward through onFollow and lets WhoToFollow decide what happens." },
-    Footer: { kind: "layout", data: ["children"], sig: "<Footer />",
-      why: "The bottom page region.",
-      boundary: "It reuses Logo instead of redrawing the brand mark." }
-  };
-  // Tagged with "useAuth()" in the data lens. Can also reads context, but it appears
-  // on every gated button, so its purple outline carries that without a tag.
-  var USES_CTX = { UserMenu: 1, ProfileCard: 1 };
-
-  var LENS_PROMPTS = {
-    boundaries: "Point at any box. What is this component's one job, and what would you name its file? Colors show the kind of component.",
-    reuse: "Avatar appears 8 times from one definition. What would it take to make every avatar round, or bigger, if each one were hand-written markup?",
-    data: "Purple boxes read from context; blue ones only get props. Why doesn't PostCard read the user from context, the way ProfileCard does?",
-    coarse: "Too coarse: only five big components. Avatar's markup is pasted 8 times, the post layout lives inside Main, and nothing can be tested on its own.",
-    right: "Just right: each box has one nameable job, repeated pieces are extracted, and state lives next to the component that uses it.",
-    fine: "Too fine: the dashed pink boxes wrap a single tag, such as a title or a number. They add files and imports but no reuse, state, or meaning."
+      boundary: "It shows a word. Filtering by tag would be the job of whoever owns the post list.",
+      starter: { data: ["props"], sig: "<Tag>react</Tag>", note: "Its text arrives as children." },
+      finished: { data: ["props"], sig: "<Tag>react</Tag>", note: "Unchanged." } },
+    Button: { kind: "pres", file: "src/components/Button.jsx",
+      why: "Every button shares one set of styles, sizes, and focus rings.",
+      boundary: "It doesn't know what clicking it does. Whether a Delete button appears at all is decided around it.",
+      starter: { data: ["props"], sig: "<Button variant=\"danger\" onClick={onDelete}>\n  Delete\n</Button>", note: "Takes variant, onClick, and children." },
+      finished: { data: ["props"], sig: "<Button variant=\"danger\" onClick={onDelete}>\n  Delete\n</Button>", note: "Unchanged." } },
+    Can: { kind: "logic", file: "src/auth/Can.jsx",
+      why: "Shows its children only when the signed-in user has a permission. Switch roles above to watch it work.",
+      boundary: "It reads permissions from context so the components around it don't have to. That's why PostCard no longer needs user.",
+      finished: { data: ["context"], sig: "<Can permission=\"posts:delete\">\n  <Button variant=\"danger\">Delete</Button>\n</Can>", note: "Calls useAuth().hasPermission and renders its children, a fallback, or nothing." } },
+    ProfileCard: { kind: "feature", file: "src/components/ProfileCard.jsx",
+      why: "Summarizes the signed-in user next to the posts.",
+      boundary: "It's always about the current user and sits far from where auth lives, so reading context makes sense. It still passes a plain name to Avatar.",
+      starter: { data: ["props"], sig: "<ProfileCard user={user} />", note: "Gets user from App as a prop." },
+      finished: { data: ["context"], sig: "<ProfileCard />", note: "Calls useAuth() for user." } },
+    LoginScreen: { kind: "feature", file: "src/components/LoginScreen.jsx",
+      why: "Lets you sign in as one of three roles. Click Log out in the user menu to see it.",
+      boundary: "It shows three Buttons and calls login. It doesn't know what happens after you sign in.",
+      starter: { data: ["props"], sig: "<LoginScreen login={login} loading={loading} />", note: "Gets login and loading from App." },
+      finished: { data: ["context"], sig: "<LoginScreen />", note: "Calls useAuth() for login and loading." } }
   };
 
-  /* ---------- Build the repeated parts of the mock ---------- */
-  var AV_COLORS = ["#6366f1", "#0ea5e9", "#d946ef", "#f59e0b", "#10b981", "#ef4444", "#8b5cf6"];
-  function avColor(name) { var h = 0; for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0; return AV_COLORS[h % AV_COLORS.length]; }
-  function initials(name) { return name.split(" ").map(function (p) { return p[0]; }).join(""); }
-  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
-  function avatar(name, size) {
-    return '<span class="m-avatar ' + size + '" data-c="Avatar" data-user="' + esc(name) + '"><span data-c="AvatarInitials" data-lv="fine">' + initials(name) + "</span></span>";
-  }
-
-  document.getElementById("postlist").innerHTML = POSTS.map(function (p) {
-    return '<article class="m-post" data-c="PostCard">' +
-      '<div class="m-post-top">' + avatar(p.author, "sm") +
-        '<div><h3 data-c="PostTitle" data-lv="fine">' + esc(p.title) + "</h3>" +
-        '<div class="m-post-meta" data-c="PostMeta" data-lv="fine">' + esc(p.author) + " · " + p.date + "</div></div></div>" +
-      '<p data-c="PostExcerpt" data-lv="fine">' + esc(p.excerpt) + "</p>" +
-      '<div class="m-post-foot"><div class="m-tags">' +
-        p.tags.map(function (t) { return '<span class="m-tag" data-c="Tag">' + t + "</span>"; }).join("") +
-      '</div><div class="m-actions">' +
-        '<span class="m-can" data-c="Can" data-perm="posts:write"><button type="button" class="m-btn" data-c="Button">Edit</button></span>' +
-        '<span class="m-can" data-c="Can" data-perm="posts:delete"><button type="button" class="m-btn danger" data-c="Button">Delete</button></span>' +
-      "</div></div></article>";
-  }).join("");
-
-  document.getElementById("follow").innerHTML = "<h4>Who to follow</h4>" + SUGGESTED.map(function (n) {
-    return '<div class="m-userrow" data-c="UserRow">' + avatar(n, "sm") +
-      '<span class="name">' + n + '</span><button type="button" class="m-btn follow-btn" data-c="Button">Follow</button></div>';
-  }).join("");
-
-  var stage = document.getElementById("stage");
-  Array.prototype.forEach.call(stage.querySelectorAll(".m-avatar"), function (el) {
-    el.style.setProperty("--av", avColor(el.getAttribute("data-user")));
-  });
+  var PROMPTS = {
+    kind: {
+      starter: "Each box is one file. Name each component's single job. Why is Avatar its own file, while the menu items inside UserMenu are plain buttons?",
+      finished: "Two new files appeared: AuthProvider and Can. Neither draws anything. Why make them components at all?"
+    },
+    reuse: {
+      starter: "Avatar is written once and used 5 times. What would it take to make every avatar square if each one were hand-written markup?",
+      finished: "Can is now one of the most-used components. What would PostCard look like if every permission check were written out by hand?"
+    },
+    data: {
+      starter: "Orange boxes receive props they never use themselves. Trace user from App to the Delete button. How many components touch it?",
+      finished: "Purple boxes read from context. Header takes no props at all now. So why does PostCard still take post as a prop?"
+    }
+  };
 
   /* ---------- State ---------- */
-  var state = { lens: "boundaries", gran: "right", role: "editor", labels: false, selected: null, hovered: null };
-  var all = Array.prototype.slice.call(stage.querySelectorAll("[data-c]"));
-  all.forEach(function (el) { if (USES_CTX[el.getAttribute("data-c")]) el.classList.add("uses-ctx"); });
+  var state = { lens: "kind", version: "starter", role: "editor", loggedIn: true, menuOpen: false, labels: false, selected: "PostCard#1", hovered: null };
 
-  // Reuse colors: one hue per component used more than once
-  var REUSE_HUES = ["#e8590c", "#1c7ed6", "#2b8a3e", "#ae3ec9", "#f08c00", "#0c8599", "#d6336c", "#5f3dc4", "#74b816", "#c92a2a"];
-  var counts = {};
-  all.forEach(function (el) { var n = el.getAttribute("data-c"); counts[n] = (counts[n] || 0) + 1; });
-  var reuseColor = {}, ri = 0;
-  Object.keys(counts).forEach(function (n) {
-    if (counts[n] > 1 && META[n] && META[n].kind !== "fine") reuseColor[n] = REUSE_HUES[ri++ % REUSE_HUES.length];
-  });
+  /* ---------- Render the specimen ---------- */
+  var AV_COLORS = ["#6366f1", "#0ea5e9", "#d946ef", "#f59e0b", "#10b981", "#ef4444"];
+  function avColor(name) { var h = 0; for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0; return AV_COLORS[h % AV_COLORS.length]; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
 
-  function curGran() { return state.lens === "granularity" ? state.gran : "right"; }
-  function levelVisible(el) {
-    var lv = el.getAttribute("data-lv") || "normal", g = curGran();
-    if (g === "coarse") return lv === "coarse";
-    if (g === "fine") return true;
-    return lv !== "fine";
+  var keyCount = {};
+  function c(name) {
+    keyCount[name] = (keyCount[name] || 0) + 1;
+    return ' data-c="' + name + '" data-k="' + name + "#" + keyCount[name] + '"';
   }
-  function colorFor(el) {
-    var n = el.getAttribute("data-c"), m = META[n];
-    if (state.lens === "reuse") return reuseColor[n] || "var(--k-single)";
-    if (state.lens === "data") return DATA[m.data[0]].color;
-    if (state.lens === "granularity" && state.gran === "coarse") return "var(--accent)";
-    return KIND[m.kind].color;
+  function avatar(name, big) {
+    return '<span class="m-avatar' + (big ? " lg" : "") + '" style="--av:' + avColor(name) + '"' + c("Avatar") + ">" +
+      name.split(" ").map(function (p) { return p[0]; }).join("") + "</span>";
   }
-
-  /* ---------- Permissions (the Can components) ---------- */
-  function applyRole() {
-    var perms = ROLE_PERMS[state.role];
-    Array.prototype.forEach.call(stage.querySelectorAll('[data-c="Can"]'), function (can) {
-      var ok = perms.indexOf(can.getAttribute("data-perm")) !== -1;
-      var child = can.firstElementChild;
-      child.hidden = !ok;
-      can.classList.toggle("denied", !ok && !can.getAttribute("data-fallback"));
-      var fb = can.querySelector(".m-fallback");
-      if (can.getAttribute("data-fallback")) {
-        if (!ok && !fb) { fb = document.createElement("span"); fb.className = "m-fallback"; fb.textContent = can.getAttribute("data-fallback"); can.appendChild(fb); }
-        if (ok && fb) fb.remove();
-      }
-    });
-    var label = state.role.charAt(0).toUpperCase() + state.role.slice(1);
-    Array.prototype.forEach.call(stage.querySelectorAll(".role-text"), function (el) { el.textContent = label; });
+  function button(label, variant, extra) {
+    return '<button type="button" class="m-btn' + (variant ? " " + variant : "") + '"' + (extra || "") + c("Button") + ">" + esc(label) + "</button>";
   }
+  function can(perm, inner, fallback) {
+    var ok = ROLE_PERMS[state.role].indexOf(perm) !== -1;
+    if (state.version === "starter") return ok ? inner : (fallback || "");
+    return '<span class="m-can' + (!ok && !fallback ? " denied" : "") + '" data-perm="' + perm + '"' + c("Can") + ">" + (ok ? inner : (fallback || "")) + "</span>";
+  }
+  function menuItem(label, extra) { return '<button type="button" class="m-menuitem"' + (extra || "") + ">" + label + "</button>"; }
 
-  /* ---------- Render overlays, legend, tree, inspector ---------- */
-  function render() {
-    stage.setAttribute("data-lens", state.lens);
-    stage.classList.toggle("labels-all", state.labels);
-    all.forEach(function (el) {
-      var on = levelVisible(el);
-      el.classList.toggle("is-c", on);
-      el.classList.toggle("fine", on && el.getAttribute("data-lv") === "fine");
-      if (on) el.style.setProperty("--c", colorFor(el)); else el.style.removeProperty("--c");
-      if (!on) el.classList.remove("sel", "hov");
-    });
-    if (state.selected && !state.selected.classList.contains("is-c")) {
-      state.selected = state.selected.parentElement ? state.selected.parentElement.closest(".is-c") : null;
+  function renderApp() {
+    keyCount = {};
+    var fin = state.version === "finished";
+    var header =
+      '<header class="m-header"' + c("Header") + ">" +
+        '<span class="m-logo"><span class="m-logo-mark"></span>Team Blog</span>' +
+        (state.loggedIn
+          ? '<div class="m-usermenu"' + c("UserMenu") + ">" +
+              '<button type="button" class="m-avatar-btn" id="avatar-btn" aria-haspopup="menu" aria-expanded="' + state.menuOpen + '" aria-label="Open the example user menu">' + avatar(USER.name) + "</button>" +
+              (state.menuOpen
+                ? '<div class="m-dropdown" role="menu"><div class="m-dd-head"><strong>' + USER.name + "</strong><small>" + USER.email + "</small></div>" +
+                    menuItem("Profile") +
+                    can("settings:edit", menuItem("Settings")) +
+                    can("users:manage", menuItem("Manage users")) +
+                    menuItem("Log out", ' data-act="logout"') + "</div>"
+                : "") +
+            "</div>"
+          : '<span class="m-muted">Not signed in</span>') +
+      "</header>";
+
+    var body;
+    if (state.loggedIn) {
+      var cards = POSTS.map(function (p) {
+        return '<article class="m-post"' + c("PostCard") + ">" +
+          '<div class="m-post-top">' + avatar(p.author) +
+            "<div><h3>" + esc(p.title) + '</h3><span class="m-muted m-small">' + p.author + " · " + p.date + "</span></div></div>" +
+          "<p>" + esc(p.excerpt) + "</p>" +
+          '<div class="m-post-foot"><div class="m-row">' +
+            p.tags.map(function (t) { return '<span class="m-tag"' + c("Tag") + ">" + t + "</span>"; }).join("") +
+          '</div><div class="m-row">' +
+            can("posts:write", button("Edit")) +
+            can("posts:delete", button("Delete", "danger")) +
+          "</div></div></article>";
+      }).join("");
+      body =
+        '<div class="m-page">' +
+          '<main class="m-postlist"' + c("PostList") + ">" +
+            '<div class="m-pagehead"><h2>Team posts</h2>' +
+              can("posts:write", button("+ New post", "primary"), '<span class="m-muted m-small">Read-only access</span>') +
+            "</div>" + cards +
+          "</main>" +
+          '<aside class="m-profile"' + c("ProfileCard") + ">" +
+            '<div class="m-profile-top">' + avatar(USER.name, true) +
+              "<div><strong>" + USER.name + '</strong><div class="m-muted m-small">' + USER.email + "</div></div></div>" +
+            '<span class="m-pill">' + state.role + "</span>" +
+          "</aside>" +
+        "</div>";
+    } else {
+      body =
+        '<section class="m-login"' + c("LoginScreen") + ">" +
+          "<h2>Sign in to Team Blog</h2>" +
+          '<p class="m-muted" style="margin:0">Pick a role to see what each one is allowed to do.</p>' +
+          '<div class="m-row">' +
+            ["viewer", "editor", "admin"].map(function (r) { return button(r, "primary", ' data-login="' + r + '"'); }).join("") +
+          "</div></section>";
     }
-    all.forEach(function (el) { el.classList.toggle("sel", el === state.selected); });
 
-    var promptKey = state.lens === "granularity" ? state.gran : state.lens;
-    document.getElementById("prompt-text").textContent = LENS_PROMPTS[promptKey];
-    document.getElementById("gran-ctl").hidden = state.lens !== "granularity";
+    var app = '<div class="m-app"' + c("App") + ">" + header + body + "</div>";
+    var root = fin ? '<div class="m-root"' + c("AuthProvider") + ">" + app + "</div>" : '<div class="m-root">' + app + "</div>";
+    return '<div class="m-window"><div class="m-chrome"><b></b><b></b><b></b><span>localhost:5173</span></div>' + root + "</div>";
+  }
 
+  /* ---------- Overlays, legend, tree, inspector ---------- */
+  var stage = document.getElementById("stage");
+
+  function infoFor(name) { var m = META[name]; return m[state.version] || m.finished; }
+  function colorFor(el, reuseColor) {
+    var name = el.getAttribute("data-c");
+    if (state.lens === "reuse") return reuseColor[name] || "var(--k-single)";
+    if (state.lens === "data") return DATA[infoFor(name).data[0]].color;
+    return KIND[META[name].kind].color;
+  }
+
+  var REUSE_HUES = ["#e8590c", "#1c7ed6", "#2b8a3e", "#ae3ec9", "#0c8599", "#d6336c"];
+  var counts = {}, reuseColor = {};
+
+  function render() {
+    stage.innerHTML = renderApp();
+    stage.classList.toggle("labels-all", state.labels);
+    var all = Array.prototype.slice.call(stage.querySelectorAll("[data-c]"));
+    counts = {}; reuseColor = {};
+    all.forEach(function (el) { var n = el.getAttribute("data-c"); counts[n] = (counts[n] || 0) + 1; });
+    var ri = 0;
+    Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; }).forEach(function (n) {
+      if (counts[n] > 1) reuseColor[n] = REUSE_HUES[ri++ % REUSE_HUES.length];
+    });
+    all.forEach(function (el) {
+      el.classList.add("is-c");
+      el.style.setProperty("--c", colorFor(el, reuseColor));
+      if (el.getAttribute("data-k") === state.selected) el.classList.add("sel");
+    });
+    if (state.selected && !stage.querySelector('[data-k="' + state.selected + '"]')) state.selected = null;
+    state.hovered = null;
+
+    document.getElementById("prompt-text").textContent = PROMPTS[state.lens][state.version];
     renderLegend();
     renderTree();
     renderDetail();
   }
 
-  function sw(color, label, dashed) {
-    return '<span><i class="' + (dashed ? "dash" : "") + '" style="--sw:' + color + '"></i>' + label + "</span>";
-  }
+  function sw(color, label) { return '<span><i style="--sw:' + color + '"></i>' + label + "</span>"; }
   function renderLegend() {
     var html = "";
-    if (state.lens === "boundaries" || (state.lens === "granularity" && state.gran !== "coarse")) {
-      ["layout", "feature", "pres", "prim", "logic"].forEach(function (k) { html += sw(KIND[k].color, KIND[k].label); });
-      if (state.lens === "granularity" && state.gran === "fine") html += sw(KIND.fine.color, KIND.fine.label, true);
-    } else if (state.lens === "granularity") {
-      html += sw("var(--accent)", "The only components in the too-coarse version");
+    if (state.lens === "kind") {
+      Object.keys(KIND).forEach(function (k) { html += sw(KIND[k].color, KIND[k].label); });
     } else if (state.lens === "reuse") {
-      var names = Object.keys(reuseColor).sort(function (a, b) { return counts[b] - counts[a]; });
-      names.forEach(function (n) { html += sw(reuseColor[n], n + " ×" + counts[n]); });
+      Object.keys(reuseColor).forEach(function (n) { html += sw(reuseColor[n], n + " ×" + counts[n]); });
       html += sw("var(--k-single)", "Used once");
     } else {
-      ["props", "context", "state", "children", "none"].forEach(function (d) { html += sw(DATA[d].color, DATA[d].label); });
+      var used = {};
+      Object.keys(counts).forEach(function (n) { used[infoFor(n).data[0]] = 1; });
+      Object.keys(DATA).forEach(function (d) { if (used[d]) html += sw(DATA[d].color, DATA[d].label); });
     }
     document.getElementById("legend").innerHTML = html;
   }
 
   function collect(root) {
     var out = [];
-    Array.prototype.forEach.call(root.children, function (child) {
-      if (child.classList.contains("is-c")) out.push({ el: child, name: child.getAttribute("data-c"), kids: collect(child) });
-      else out = out.concat(collect(child));
+    Array.prototype.forEach.call(root.children, function (ch) {
+      if (ch.hasAttribute("data-c")) out.push({ el: ch, name: ch.getAttribute("data-c"), kids: collect(ch) });
+      else out = out.concat(collect(ch));
     });
     return out;
   }
@@ -709,11 +590,11 @@ h1 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--f-display); letter-spacing: -
       while (i < nodes.length) {
         var n = nodes[i], run = 1;
         while (i + run < nodes.length && nodes[i + run].name === n.name) run++;
-        var group = nodes.slice(i, i + run).map(function (x) { return x.el; });
+        var group = nodes.slice(i, i + run).map(function (x) { return x.el.getAttribute("data-k"); });
         var idx = treeMap.push(group) - 1;
-        var isSel = group.indexOf(state.selected) !== -1;
-        html += '<li><button type="button" class="tree-btn' + (isSel ? " sel" : "") + '" data-ti="' + idx + '" style="--tc:' + colorFor(n.el) + '">' +
-          "<i></i>" + n.name + (run > 1 ? " <em>×" + run + "</em>" : "") + "</button>";
+        html += '<li><button type="button" class="tree-btn' + (group.indexOf(state.selected) !== -1 ? " sel" : "") +
+          '" data-ti="' + idx + '" style="--tc:' + colorFor(n.el, reuseColor) + '"><i></i>' + n.name +
+          (run > 1 ? " <em>×" + run + "</em>" : "") + "</button>";
         if (n.kids.length) html += "<ul>" + build(n.kids) + "</ul>";
         html += "</li>";
         i += run;
@@ -725,84 +606,81 @@ h1 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--f-display); letter-spacing: -
 
   function renderDetail() {
     var box = document.getElementById("detail");
-    var el = state.selected;
-    if (!el) {
-      box.innerHTML = '<h3>Inspector</h3><p class="empty">Click any outlined box on the page, or a name in the tree, to see what that component is and why its boundary sits where it does.</p>';
+    if (!state.selected) {
+      box.innerHTML = '<h3>Inspector</h3><p class="empty">Click any outlined box, or a name in the tree, to see what that component does and why its boundary sits where it does.</p>';
       return;
     }
-    var name = el.getAttribute("data-c"), m = META[name], n = counts[name];
+    var name = state.selected.split("#")[0], m = META[name], info = infoFor(name), n = counts[name];
     var chips = '<span class="chip" style="--cc:' + KIND[m.kind].color + '">' + KIND[m.kind].label + "</span>" +
-      m.data.map(function (d) { return '<span class="chip" style="--cc:' + DATA[d].color + '">' + DATA[d].label + "</span>"; }).join("");
+      info.data.map(function (d) { return '<span class="chip" style="--cc:' + DATA[d].color + '">' + DATA[d].label + "</span>"; }).join("");
     box.innerHTML =
-      "<h3>Inspector</h3>" +
+      "<h3>Inspector · " + (state.version === "starter" ? "starter code" : "finished code") + "</h3>" +
       "<h2>" + name + "</h2>" +
+      '<div class="file">' + m.file + "</div>" +
       '<div class="chips">' + chips + "</div>" +
-      '<div class="sig">' + esc(m.sig) + "</div>" +
-      '<div class="count">' + (n > 1 ? "Used " + n + " times on this page" : "Used once on this page") + "</div>" +
+      '<div class="sig">' + esc(info.sig) + "</div>" +
+      "<p>" + esc(info.note) + "</p>" +
+      '<div class="count">' + (n > 1 ? "Used " + n + " times on this screen" : "Used once on this screen") + "</div>" +
       "<h3>Why it's a component</h3><p>" + esc(m.why) + "</p>" +
       "<h3>Where the boundary sits</h3><p>" + esc(m.boundary) + "</p>";
   }
 
   /* ---------- Interaction ---------- */
-  function select(el) { state.selected = el; render(); }
-  function setHover(el) {
-    if (state.hovered === el) return;
-    if (state.hovered) state.hovered.classList.remove("hov");
-    state.hovered = el;
+  function setHover(key) {
+    if (state.hovered === key) return;
+    var old = state.hovered && stage.querySelector('[data-k="' + state.hovered + '"]');
+    if (old) old.classList.remove("hov");
+    state.hovered = key;
+    var el = key && stage.querySelector('[data-k="' + key + '"]');
     if (el) el.classList.add("hov");
   }
-
-  var dropdown = document.getElementById("dropdown");
-  var avatarBtn = document.getElementById("avatar-btn");
-  function setMenu(open) {
-    dropdown.hidden = !open;
-    avatarBtn.setAttribute("aria-expanded", String(open));
-    renderTree();
+  function setPressed(segId, value) {
+    Array.prototype.forEach.call(document.querySelectorAll("#" + segId + " button"), function (b) {
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-v") === value));
+    });
+  }
+  function login(role) {
+    state.role = role; state.loggedIn = true; state.menuOpen = false;
+    setPressed("role", role);
   }
 
   stage.addEventListener("click", function (e) {
-    if (e.target.closest("a")) e.preventDefault();
-    if (e.target.closest("#avatar-btn")) setMenu(dropdown.hidden);
-    var fb = e.target.closest(".follow-btn");
-    if (fb) fb.textContent = fb.textContent === "Follow" ? "Following" : "Follow";
-    var el = e.target.closest(".is-c");
-    if (el) select(el);
+    var t = e.target;
+    if (t.closest("#avatar-btn")) state.menuOpen = !state.menuOpen;
+    else if (t.closest('[data-act="logout"]')) { state.loggedIn = false; state.menuOpen = false; setPressed("role", ""); state.selected = "LoginScreen#1"; render(); return; }
+    else if (t.closest("[data-login]")) { login(t.closest("[data-login]").getAttribute("data-login")); state.selected = "App#1"; render(); return; }
+    else if (!t.closest(".m-dropdown")) state.menuOpen = false;
+    var el = t.closest(".is-c");
+    if (el) state.selected = el.getAttribute("data-k");
+    render();
   });
-  stage.addEventListener("mouseover", function (e) { setHover(e.target.closest(".is-c")); });
+  stage.addEventListener("mouseover", function (e) { var el = e.target.closest(".is-c"); setHover(el ? el.getAttribute("data-k") : null); });
   stage.addEventListener("mouseleave", function () { setHover(null); });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !dropdown.hidden) setMenu(false); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && state.menuOpen) { state.menuOpen = false; render(); } });
 
   var tree = document.getElementById("tree");
   tree.addEventListener("click", function (e) {
     var b = e.target.closest(".tree-btn"); if (!b) return;
     var group = treeMap[+b.getAttribute("data-ti")];
-    var i = group.indexOf(state.selected);
-    select(group[(i + 1) % group.length]);
+    state.selected = group[(group.indexOf(state.selected) + 1) % group.length];
+    render();
   });
-  tree.addEventListener("mouseover", function (e) {
-    var b = e.target.closest(".tree-btn");
-    setHover(b ? treeMap[+b.getAttribute("data-ti")][0] : null);
-  });
+  tree.addEventListener("mouseover", function (e) { var b = e.target.closest(".tree-btn"); setHover(b ? treeMap[+b.getAttribute("data-ti")][0] : null); });
   tree.addEventListener("mouseleave", function () { setHover(null); });
 
-  function wireSeg(id, key, after) {
-    var seg = document.getElementById(id);
-    seg.addEventListener("click", function (e) {
+  function wireSeg(id, fn) {
+    document.getElementById(id).addEventListener("click", function (e) {
       var b = e.target.closest("button"); if (!b) return;
-      state[key] = b.getAttribute("data-v");
-      Array.prototype.forEach.call(seg.querySelectorAll("button"), function (x) { x.setAttribute("aria-pressed", String(x === b)); });
-      if (after) after();
+      setPressed(id, b.getAttribute("data-v"));
+      fn(b.getAttribute("data-v"));
       render();
     });
   }
-  wireSeg("lens", "lens");
-  wireSeg("gran", "gran");
-  wireSeg("role", "role", applyRole);
+  wireSeg("lens", function (v) { state.lens = v; });
+  wireSeg("version", function (v) { state.version = v; });
+  wireSeg("role", function (v) { login(v); });
   document.getElementById("labels-toggle").addEventListener("change", function (e) { state.labels = e.target.checked; render(); });
 
-  /* ---------- Start on a worked example ---------- */
-  applyRole();
-  state.selected = stage.querySelector('[data-c="PostCard"]');
   render();
 })();
 </script>

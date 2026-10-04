@@ -1,294 +1,237 @@
-# React Context & Auth: 50-Minute Replit Lesson
+# React Components & Context: 50-Minute Lesson
 
 ## Lesson overview
 
-Students refactor a prop-drilled React app into one that shares auth state through Context. Then they add a user dropdown and role-based permissions. The class follows a read-before-write rhythm: students predict and trace code before they change it.
+Students look at a small React app, Team Blog, through the **Component Anatomy Lab** first: what each component is, which ones are reused, and where each gets its data. Then they refactor the real code to match what they saw: they move the signed-in user into Context and replace hand-written role checks with a `<Can>` component.
 
-**Audience:** students who know components, props, `useState`, and basic `useEffect`. No prior Context experience is needed.
+Every outlined box in the lab is one file in `src/components`, so students can always point at a box and open the matching file.
+
+**Audience:** students who know JSX, props, `useState`, and basic `useEffect`. They don't need any prior experience with Context.
 
 **Learning objectives.** By the end of class, students can:
 
-1. Explain prop drilling and why it becomes a problem as an app grows.
-2. Define *context*, *Provider*, *consumer*, and *default value*, and say what `useContext` returns with and without a Provider.
-3. Build an `AuthProvider` and a `useAuth` custom hook that throws a clear error when the Provider is missing.
-4. Decide when a component should read context versus receive props (connected vs. presentational).
-5. Gate UI with permissions using `hasPermission()` and a `<Can>` component, and state why UI gating is not security.
+1. Explain why an app is split into components, and name each component's single job.
+2. Tell layout, feature, presentational, and logic-only components apart.
+3. Spot prop drilling: a component receiving props it only passes along.
+4. Build an `AuthProvider` and a `useAuth` hook, and use them instead of props.
+5. Decide whether data should come from props or from context.
+6. Judge component size: when a split is too coarse and when it's too fine.
 
 **Materials**
 
-- This repo: `src/App.jsx` is the student starter, and `teacher/solution/App.jsx` is the finished build
-- The Component Anatomy Lab (`/anatomy.html` in the running app) for the opening discussion or a follow-up class
-- Projector for live code-along; students follow along in their own Repls
-- Exit ticket (3 questions, in Segment 6)
+- This repo: the starter code is in `src/`, and the finished code is in `teacher/solution/src/`
+- The Component Anatomy Lab, served at `/anatomy.html` by the running app (or open `public/anatomy.html` directly)
+- A projector. Students follow along in their own Repl or local copy
+- The exit ticket in Segment 6
 
-**Key vocabulary:** prop drilling · context · Provider · consumer · default value · custom hook · presentational component · permission · role
+**Key vocabulary:** component · props · layout / feature / presentational component · prop drilling · context · Provider · `useContext` · custom hook · permission
 
-## Setup (before class, ~5 minutes)
+## Project map
+
+```
+src/
+├─ main.jsx               renders <App />
+├─ App.jsx                owns the user (starter) / picks a screen (finished)
+├─ styles.css             all styling; nothing to edit
+├─ data/fakeApi.js        pretend server: fakeLogin(), fetchPosts()
+├─ components/
+│  ├─ Header.jsx          layout
+│  ├─ UserMenu.jsx        feature: avatar + dropdown
+│  ├─ PostList.jsx        feature: loads posts
+│  ├─ PostCard.jsx        presentational: one post
+│  ├─ ProfileCard.jsx     feature: the signed-in user
+│  ├─ LoginScreen.jsx     feature: pick a role
+│  ├─ Avatar.jsx          presentational, used 5 times
+│  ├─ Button.jsx          presentational, used everywhere
+│  └─ Tag.jsx             presentational
+└─ auth/                  ← students create this today
+   ├─ AuthContext.jsx     AuthProvider + useAuth
+   └─ Can.jsx             permission gate
+```
+
+## Setup (before class, about 5 minutes)
 
 1. Make sure your copy of this repo is **public**, so students can fork or import it.
-2. Test the import yourself on Replit: **Create Repl → Import from GitHub**, then paste the repo URL.
-3. Click **Run** and confirm the login screen shows three buttons: viewer, editor, admin.
-4. Open `/anatomy.html` in the preview pane (add it to the end of the preview URL) to check that the Component Anatomy Lab loads.
-5. Share the repo URL with students. Each student forks it on GitHub or imports it into their own Repl.
+2. Test the import on Replit: **Create Repl → Import from GitHub**, paste the repo URL, and click **Run**.
+3. Sign in as each role and confirm the posts load.
+4. Add `/anatomy.html` to the preview URL and confirm the lab loads.
+5. Share the repo URL with students.
 
-**Note:** the `teacher/` folder, including the solution, is visible to anyone who forks the repo. If that's a concern, move `teacher/` to a private repo before sharing.
+**Note:** anyone who forks the repo can see the `teacher/` folder, including the solution. If that matters, move `teacher/` to a private repo before sharing.
 
-**Fallback if a student's Repl breaks mid-class:** paste the code from the matching checkpoint in this plan, or paste `teacher/solution/App.jsx` into `src/App.jsx` and keep following along.
+**Fallback if a student gets stuck:** copy any single file from `teacher/solution/src/` over the matching file in `src/`. The files are designed to swap one at a time.
 
 ## Agenda
 
-The class runs in six segments. Roughly half the time is students typing in their own Repls.
-
 | Time | Segment | Mode | Students leave with |
 | --- | --- | --- | --- |
-| 0–7 min | 1. Hook: feel the prop-drilling pain | Read + predict | A count of props passed through components that never use them |
-| 7–15 min | 2. Core concepts and vocabulary | Mini-lecture + check | Context, Provider, consumer, default value defined |
-| 15–27 min | 3. Build `AuthProvider` + `useAuth` | Live code-along | Prop drilling removed, app still works |
-| 27–37 min | 4. Connected `UserMenu` dropdown | Code-along + discussion | Dropdown reads context; Avatar stays presentational |
-| 37–45 min | 5. Permissions with `<Can>` | Pair exercise | Buttons that appear or hide by role |
-| 45–50 min | 6. Wrap-up + exit ticket | Individual | Exit ticket answers, homework |
+| 0–8 min | 1. Tour the lab | Whole class, lab on screen | Each component's job and kind |
+| 8–15 min | 2. Trace the data | Lab + read code in pairs | Prop drilling spotted; context explained |
+| 15–28 min | 3. Build `AuthProvider` + `useAuth` | Live code-along | No auth props left |
+| 28–38 min | 4. Permissions with `<Can>` | Code-along, then pairs | Every role check replaced |
+| 38–45 min | 5. Too big or too small? | Discussion | A rule for component size |
+| 45–50 min | 6. Exit ticket | Individual | Exit ticket answers, homework |
 
-**If you run long:** cut the Escape-key handler in Segment 4, and give students the `<Can>` component in Segment 5 so they only apply it.
+**If you run long:** in Segment 4, give students `Can.jsx` ready-made so they only use it, and shorten Segment 5 to the first question.
 
-## Segment 1: Hook — feel the prop-drilling pain (0–7 min)
+## Segment 1: Tour the lab (0–8 min)
 
-Students trace the starter code and discover that most components carry auth data they never use.
+Students see the app as a set of named pieces before they read any code.
 
-**Do (2 min):** Students import the repo, click Run, and log in as each role. Everything works.
+**Setup:** open the lab with **Lens: What kind?** and **Code: Starter** selected.
 
-**Read and predict (3 min, pairs).** Project `src/App.jsx`. Have pairs trace `logout` from `App` to the button that calls it, writing down every component it passes through. Then answer:
+**Do (3 min).** Click through a few boxes and read the inspector aloud: the file path, the kind, and "why it's a component." Keep the code open next to it, and have students open `src/components/PostCard.jsx` while the PostCard box is selected. Every box is one file.
 
-1. Which components receive `logout` but never call it? *(Header.)*
-2. Which receive `user` only to hand it down? *(Dashboard. Header uses it for just one check.)*
-3. How many files would you edit to show the user's email inside `PostList`? *(Easy here, but imagine six layers deep.)*
+**The four kinds (2 min):**
 
-**Name it (2 min).** Write **prop drilling** on the board: passing data through components that don't need it, just to reach one that does. Draw the tree:
-
-```
-App  (owns user, login, logout, loading)
-├─ Header        ← user, logout   (passes logout through)
-│   └─ UserMenu  ← user, logout
-│       └─ Avatar ← user
-└─ Dashboard     ← user, login, loading   (passes all through)
-    ├─ LoginScreen ← login, loading
-    └─ PostList    ← user
-```
-
-**Transition line:** "What if any component could just *ask* for the user, without its parents carrying it?"
-
-## Segment 2: Core concepts and vocabulary (7–15 min)
-
-Context is a broadcast channel: a Provider sends a value, and any component below it can tune in with `useContext`.
-
-**Analogy (2 min): a radio station.**
-
-| Radio | React | Code |
+| Kind | What it does | Example |
 | --- | --- | --- |
-| Building a frequency | Creating a context | `createContext(defaultValue)` |
-| The station broadcasting | Provider | `<AuthContext.Provider value={...}>` |
-| A radio tuning in | Consumer | `useContext(AuthContext)` |
-| Static when no station is in range | Default value | The argument to `createContext` |
-| Signal range | The Provider's subtree | Only components rendered inside it |
+| Layout | Arranges other components | Header, App |
+| Feature | Has its own data or state | UserMenu, PostList |
+| Presentational | Shows whatever props it's given | Avatar, PostCard, Button |
+| Logic only | No UI of its own | (none yet; two arrive today) |
 
-**Show the minimal shape (3 min).** Type this in a scratch file, not the project:
+**Switch to the Reuse lens (3 min).** Avatar is written once and used 5 times, and Button is used on every post. Ask the prompt on screen: *"What would it take to make every avatar square if each one were hand-written markup?"* (You'd edit five places and probably miss one.)
+
+**Ask:** "Why is Avatar its own file, but the menu items inside UserMenu aren't?" Don't settle it yet; you come back to it in Segment 5.
+
+## Segment 2: Trace the data (8–15 min)
+
+Students find the props that only pass through, then learn the tool that fixes it.
+
+**Switch to Lens: Data flow, Code: Starter (2 min).** Orange boxes receive props they never use. Header and PostList are orange.
+
+**Read and predict (3 min, pairs).** Have pairs trace `user` in the code, from `App.jsx` to the Delete button in `PostCard.jsx`, and answer:
+
+1. Which components receive `user` without using it? *(Header passes it straight to UserMenu, and PostList uses it once but mostly passes it on.)*
+2. Why does PostCard need `user`? *(Only to decide whether to show Edit and Delete.)*
+3. What would you change to add a new role, such as `moderator`? *(Every `user.role === …` check, in three files.)*
+
+Name it on the board: **prop drilling** means passing data through components that don't need it, just to reach one that does.
+
+**Context in two minutes.** Context is a broadcast channel. A **Provider** high in the tree sends a value, and any component inside it can read that value with `useContext`. Components in between don't touch it.
 
 ```jsx
-const ThemeContext = createContext("light");
-
-function App() {
-  return (
-    <ThemeContext.Provider value="dark">
-      <Child />
-    </ThemeContext.Provider>
-  );
-}
-
-function Child() {
-  const theme = useContext(ThemeContext); // "dark"
-  return <p>{theme}</p>;
-}
+const AuthContext = createContext(null);                // the channel
+<AuthContext.Provider value={...}>...</...>             // the broadcaster
+const auth = useContext(AuthContext);                   // a receiver, anywhere below
 ```
 
-**Check for understanding (3 min, cold call or whiteboards):**
+If no Provider is above, `useContext` returns the default value you passed to `createContext`, which is `null` here.
 
-1. If `Child` renders *outside* the Provider, what does `theme` equal? *("light", the default.)*
-2. Is a Provider required? *(No, but without one the value is a constant you can never update. That's why real apps always use one.)*
-3. When the Provider's `value` changes, who re-renders? *(Every component below it that calls `useContext` on that context.)*
+**Flip Code to Finished for 10 seconds.** The orange boxes are gone, and Header shows "No data." "That's where we're going."
 
-This repo uses React 19, where `<ThemeContext value="dark">` works as shorthand for `.Provider`. The lesson uses `.Provider` because students will see it in most existing code.
+## Segment 3: Build AuthProvider + useAuth (15–28 min)
 
-## Segment 3: Build AuthProvider + useAuth (15–27 min)
+Students move the user out of `App` and into a Provider, then delete every auth prop.
 
-Students move auth state out of `App` into a Provider, then delete every drilled prop. The app should behave exactly as before.
-
-**Step 1 — Create the context and Provider (5 min).** Add this near the top of `App.jsx`, and update the import:
+**Step 1: create `src/auth/AuthContext.jsx` (5 min).** Move the `useState` and `login`/`logout` code out of `App.jsx` into this file:
 
 ```jsx
-import { createContext, useContext, useState, useMemo, useCallback } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { fakeLogin } from "../data/fakeApi.js";
 
 const AuthContext = createContext(null);
 
-function AuthProvider({ children }) {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const login = useCallback(async (role = "viewer") => {
+  const login = useCallback(async (role) => {
     setLoading(true);
-    try { setUser(await fakeLogin(role)); }
-    finally { setLoading(false); }
+    try {
+      setUser(await fakeLogin(role));
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   const logout = useCallback(() => setUser(null), []);
 
-  const value = useMemo(
-    () => ({ user, loading, login, logout }),
-    [user, loading, login, logout]
-  );
+  const value = useMemo(() => ({ user, loading, login, logout }), [user, loading, login, logout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
-```
 
-Think aloud: "This is the same state `App` had. We just moved it into a component whose only job is to own it and broadcast it." Skip a deep dive on `useMemo`/`useCallback`. Just say they stop every consumer from re-rendering on every Provider render, and come back to it if asked.
-
-**Step 2 — The custom hook with a guard (2 min):**
-
-```jsx
-function useAuth() {
+export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used inside <AuthProvider>");
   return ctx;
 }
 ```
 
-Ask: "Why default to `null` and throw, instead of using a fake user?" *(A forgotten Provider fails loudly instead of silently showing wrong data.)*
+Say this out loud: "It's the same state App had. We moved it into a component whose only job is to own it and share it." `useMemo` and `useCallback` keep the value from changing on every render; don't go deeper unless someone asks.
 
-**Step 3 — Wrap the app and delete props (5 min).** Replace `App`:
+Ask: "Why does `useAuth` throw instead of returning `null`?" *(A forgotten Provider fails loudly instead of quietly breaking something later.)*
 
-```jsx
-export default function App() {
-  return (
-    <AuthProvider>
-      <Header />
-      <Dashboard />
-    </AuthProvider>
-  );
-}
-```
-
-Then go component by component. Remove the props from each signature and replace them with one line, such as `const { user, logout } = useAuth();`, picking only what that component uses. `Dashboard` needs only `user`; `LoginScreen` needs `login` and `loading`.
-
-**Checkpoint:** log in and out as each role. If the screen goes blank, open the browser console, where the guard's error message usually names the problem.
-
-**Quick demo of the guard (30 sec):** temporarily move `<Header />` outside `<AuthProvider>` and show the error, then move it back.
-
-## Segment 4: Connected UserMenu dropdown (27–37 min)
-
-`UserMenu` reads auth from context and gains a user-info header and click-outside closing. `Avatar` keeps taking a prop on purpose.
-
-**Discussion first (3 min): should `Avatar` call `useAuth()` too?** Let students argue both sides, then land on this rule:
-
-- **Connected component:** knows *where* the data lives (calls `useAuth`). Example: `UserMenu`.
-- **Presentational component:** only knows *how* to display what it's given (props). Example: `Avatar`.
-
-`Avatar` stays presentational so it can show *any* user: a comment author, a teammate list, or a test with fake data. If it called `useAuth`, it could only ever show the logged-in user.
-
-**Code-along (5 min).** Update `UserMenu`, and add `useRef` and `useEffect` to the import:
+**Step 2: wrap the app in `main.jsx` (1 min):**
 
 ```jsx
-function UserMenu() {
-  const { user, logout } = useAuth();
-  const [open, setOpen] = useState(false);
-  const menuRef = useRef(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const onClick = e => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) setOpen(false);
-    };
-    const onKey = e => e.key === "Escape" && setOpen(false);
-    document.addEventListener("mousedown", onClick);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onClick);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
-
-  return (
-    <div ref={menuRef} style={{ position: "relative" }}>
-      <button onClick={() => setOpen(o => !o)} aria-haspopup="menu"
-              aria-expanded={open} style={styles.avatarBtn}>
-        <Avatar user={user} />
-      </button>
-      {open && (
-        <div role="menu" style={styles.dropdown}>
-          <div style={{ padding: "8px 12px", borderBottom: "1px solid #eee" }}>
-            <strong>{user.name}</strong>
-            <div style={{ fontSize: 12, color: "#666" }}>{user.email}</div>
-            <div style={{ fontSize: 12, color: "#666" }}>Role: {user.role}</div>
-          </div>
-          <MenuItem onClick={() => alert("Profile")}>Profile</MenuItem>
-          <MenuItem onClick={() => alert("Settings")}>Settings</MenuItem>
-          <MenuItem onClick={logout}>Log out</MenuItem>
-        </div>
-      )}
-    </div>
-  );
-}
+import { AuthProvider } from "./auth/AuthContext.jsx";
+// ...
+<StrictMode>
+  <AuthProvider>
+    <App />
+  </AuthProvider>
+</StrictMode>
 ```
 
-**Trace together (2 min).** Have students read the `useEffect` line by line and answer in their own words:
+**Step 3: delete the props, one file at a time (6 min).** In each file, remove the auth props from the function's parameters and add one line that asks for what the component needs:
 
-1. Why `if (!open) return;`? *(There are no listeners while the menu is closed.)*
-2. What does the returned function do, and when does it run? *(It removes the listeners when the menu closes or the component unmounts. Without it, listeners pile up.)*
-3. Why `menuRef.current.contains(e.target)`? *(Clicks inside the menu shouldn't close it.)*
+| File | Remove | Add |
+| --- | --- | --- |
+| `App.jsx` | `useState`, `login`, `logout`, and every auth prop it passes | `const { user } = useAuth();` |
+| `Header.jsx` | `{ user, logout }` and the props on `<UserMenu>` | nothing |
+| `UserMenu.jsx` | `{ user, logout }` | `const { user, logout } = useAuth();` |
+| `ProfileCard.jsx` | `{ user }` | `const { user } = useAuth();` |
+| `LoginScreen.jsx` | `{ login, loading }` | `const { login, loading } = useAuth();` |
+| `PostList.jsx` | `{ user }` and `user={user}` on PostCard | `const { user } = useAuth();` *(temporary)* |
+| `PostCard.jsx` | `user` from `{ post, user }` | `const { user } = useAuth();` *(temporary)* |
 
-**Checkpoint:** open the menu, click elsewhere, then press Escape. Both should close it.
+**Checkpoint:** sign in and out as each role. The app should behave exactly as before. If the screen goes blank, open the console: the error from `useAuth` names the problem.
 
-## Segment 5: Permissions with hasPermission and Can (37–45 min)
+**Point out the cost:** PostCard now calls `useAuth()` just for two role checks. That makes it depend on auth, so it can't be rendered in a test without a Provider. Segment 4 fixes that.
 
-You add the permission engine to the Provider (3 min); then pairs build `<Can>` and gate the UI themselves (5 min).
+## Segment 4: Permissions with Can (28–38 min)
 
-**Teacher adds (3 min).** Above `AuthProvider`:
+Students replace every hand-written role check with a permission check.
+
+**Teacher adds permissions to `AuthContext.jsx` (3 min).** Add this above `AuthProvider`:
 
 ```jsx
 const ROLE_PERMISSIONS = {
-  admin:  ["posts:read", "posts:write", "posts:delete", "users:manage", "settings:edit"],
-  editor: ["posts:read", "posts:write", "settings:edit"],
   viewer: ["posts:read"],
+  editor: ["posts:read", "posts:write", "settings:edit"],
+  admin: ["posts:read", "posts:write", "posts:delete", "settings:edit", "users:manage"],
 };
 ```
 
-Inside `AuthProvider`, add the following, then add `hasPermission` to `value` and to its dependency list:
+Inside `AuthProvider`, add this, then add `hasPermission` to `value` and to its dependency list:
 
 ```jsx
-const permissions = useMemo(
-  () => new Set(user ? ROLE_PERMISSIONS[user.role] ?? [] : []),
-  [user]
-);
-const hasPermission = useCallback(perm => permissions.has(perm), [permissions]);
+const permissions = useMemo(() => new Set(user ? ROLE_PERMISSIONS[user.role] : []), [user]);
+const hasPermission = useCallback((perm) => permissions.has(perm), [permissions]);
 ```
 
-Key idea to say out loud: components ask *"can I do X?"*, never *"is this an admin?"* Adding a role later means editing one map, not hunting through every component.
+The key idea: components ask "can I do X?", never "is this an admin?" Adding a role then means editing one map.
 
-**Pair exercise (5 min).** Put this on screen:
-
-1. Write a `Can` component that takes `permission`, `children`, and an optional `fallback`. It shows `children` only if the user has that permission. *(Hint: it's 3 lines and calls `useAuth`.)*
-2. In `PostList`, gate **+ New post** and **Edit** with `posts:write`, and **Delete** with `posts:delete`. Show *Read-only access* as the fallback for New post.
-3. In `UserMenu`, show **Settings** only with `settings:edit`, and add a **Manage users** item for `users:manage`.
-4. Test as viewer, editor, and admin, and record what each role sees.
-
-**Answer for step 1:**
+**Create `src/auth/Can.jsx` together (2 min):**
 
 ```jsx
-function Can({ permission, children, fallback = null }) {
+import { useAuth } from "./AuthContext.jsx";
+
+export default function Can({ permission, children, fallback = null }) {
   const { hasPermission } = useAuth();
   return hasPermission(permission) ? children : fallback;
 }
 ```
 
-**Expected results for step 4:**
+**Pair exercise (5 min).** Replace every `user.role` check with `<Can>`:
+
+1. `UserMenu.jsx`: wrap **Settings** in `settings:edit` and **Manage users** in `users:manage`.
+2. `PostList.jsx`: wrap **+ New post** in `posts:write`, with `fallback={<span className="muted small">Read-only access</span>}`. Then delete `useAuth` from PostList, because it no longer needs the user.
+3. `PostCard.jsx`: wrap **Edit** in `posts:write` and **Delete** in `posts:delete`. Then delete `useAuth` from PostCard.
+4. Test each role and check the results against this table:
 
 | Role | New post | Edit | Delete | Settings | Manage users |
 | --- | --- | --- | --- | --- | --- |
@@ -296,48 +239,47 @@ function Can({ permission, children, fallback = null }) {
 | editor | Yes | Yes | No | Yes | No |
 | admin | Yes | Yes | Yes | Yes | Yes |
 
-**Must-say before moving on:** hiding a button is UX, not security. Anyone can call your API from the browser console, so the server has to check the same permissions on every request.
+**Checkpoint:** in the lab, set **Code: Finished** and **Lens: Data flow**. Students' code should now match it: PostCard takes only `post`, and the purple boxes are the only components that read context.
 
-## Segment 6: Wrap-up, exit ticket, homework (45–50 min)
+**Must-say:** hiding a button is about the user experience, not security. Anyone can call your API from the browser console, so the server has to check the same permissions on every request.
 
-Students explain the pattern back in their own words before leaving.
+## Segment 5: Too big or too small? (38–45 min)
 
-**Recap (1 min).** Redraw the Segment 1 tree. Now `App` passes nothing: `AuthProvider` wraps everything, and each component that needs auth calls `useAuth()` directly.
+Students decide how fine-grained components should be.
 
-**Exit ticket (3 min, individual, on paper or as a Replit comment):**
+Put the lab's **Rules to take away** section on screen. Then ask the class to vote on each proposal, and have someone defend each side:
 
-1. In one sentence, what problem does Context solve?
-2. What does `useContext(AuthContext)` return if there is no `AuthProvider` above it? Why does our `useAuth` throw in that case?
-3. A teammate hides the Delete button for viewers and says the feature is secure. What do you tell them?
+1. **"Extract PostTitle into its own component."** *(No. It's one `<h3>` used in one place, with no state and no logic. It adds a file and an import but no meaning.)*
+2. **"Extract the dropdown's menu items into a MenuItem component."** *(Debatable. They repeat four times, but only inside one file and they're one tag each. Extract it once a second menu needs the same item.)*
+3. **"Make Avatar call `useAuth()` so we don't have to pass `name`."** *(No. Then Avatar could only ever show the signed-in user, never a post's author.)*
+4. **"Put the whole post list, cards included, in PostList.jsx."** *(No. That's too coarse: PostCard's markup would sit inside a loop, and you couldn't reuse or test a single card.)*
 
-*Look-fors:* (1) mentions passing data through components that don't need it; (2) says "`null`, the default" and explains failing loudly; (3) says the server must enforce permissions too.
+Land on the rule: **extract a component when it repeats, has one job you can name, owns its own state, or needs testing on its own. Otherwise, keep it as plain JSX.**
 
-**Homework (assign in the last minute).** Pick one:
+## Segment 6: Exit ticket and homework (45–50 min)
 
-- **Core:** Add a `moderator` role that can read, write, and delete posts but can't edit settings or manage users. Change only `ROLE_PERMISSIONS`. Write two sentences on why no component needed to change.
-- **Stretch:** Add an `updateProfile(changes)` function to the context and a Profile form in the dropdown that changes the user's name. Confirm the avatar initials update everywhere.
-- **Challenge:** Persist the session so a page refresh keeps the user logged in. Explain one security risk of your approach.
+**Exit ticket (3 min, individual):**
 
-## Common mistakes and differentiation
+1. Name one presentational component and one feature component in Team Blog, and say what makes each one that kind.
+2. Before the refactor, why was Header receiving `user` and `logout`? What changed after?
+3. Why does PostCard take `post` as a prop instead of reading posts from context?
 
-Most stuck students hit one of five errors, and the first two cause most of the trouble.
+*Look-fors:* (1) presentational components show their props; feature components own data or read context. (2) Header only passed them along to UserMenu, which is prop drilling; now UserMenu reads context itself. (3) PostCard should show *any* post, so the caller decides which one.
+
+**Homework (pick one):**
+
+- **Core:** Add a `moderator` role that can read, write, and delete posts but can't edit settings or manage users. Change only `ROLE_PERMISSIONS`, then write two sentences on why no component needed to change.
+- **Stretch:** Build a `PostDetail` page that shows one post with its full text. Reuse `Avatar`, `Tag`, `Button`, and `Can`. Which new components did you need, and why?
+- **Challenge:** Add a theme toggle (light or dark) using a second context, `ThemeContext`. Explain why theme belongs in context but the post data doesn't.
+
+## Common mistakes
 
 | Symptom | Cause | Fix |
 | --- | --- | --- |
-| "useAuth must be used inside &lt;AuthProvider&gt;" | Component rendered outside the Provider, or `App` not updated | Wrap `<Header />` and `<Dashboard />` in `<AuthProvider>` |
-| `createContext is not defined` (or `useRef`, `useEffect`, etc.) | Missing from the React import line | Add it to `import { … } from "react"` |
-| `Cannot read properties of null (reading 'name')` | `UserMenu` or `PostList` rendered while `user` is `null` | Keep the `user ? … : …` checks in `Header` and `Dashboard` |
-| A new permission never shows up | `hasPermission` added to the Provider but not to `value` (or its deps) | Add it to both the object and the dependency array |
-| Dropdown never closes on an outside click | `ref={menuRef}` missing from the wrapper `div` | Attach the ref to the outermost `div` of `UserMenu` |
+| "useAuth must be used inside &lt;AuthProvider&gt;" | `main.jsx` doesn't wrap `<App />` | Wrap `<App />` in `<AuthProvider>` in `main.jsx` |
+| `useAuth is not defined` | Missing import | `import { useAuth } from "../auth/AuthContext.jsx";` (one `../` from `components/`) |
+| `Cannot read properties of null (reading 'name')` | A component used `user` while signed out | Keep the `if (!user)` check in UserMenu and the `user ? … : …` check in App |
+| Buttons never appear for any role | `hasPermission` wasn't added to `value` or its dependency list | Add it to both |
+| Header still passes props | Old props left on `<UserMenu user={user} … />` | Change it to `<UserMenu />` |
 
-**Support for students who fall behind:**
-
-- Give them the checkpoint code for the segment they're on so they can rejoin the group.
-- In Segment 5, give them the `Can` component and have them only apply it.
-- Pair them with a student who finished the previous checkpoint.
-
-**Extensions for students who finish early:**
-
-- Explain in writing why `value` is wrapped in `useMemo`. Then remove it and use the React DevTools profiler (or a `console.log` in `PostList`) to show the extra renders.
-- Split the file into `auth/AuthContext.jsx`, `components/UserMenu.jsx`, and so on, exporting `AuthProvider` and `useAuth`.
-- Rewrite `<AuthContext.Provider value={value}>` with the React 19 shorthand and confirm it still works.
+**For students who finish early:** remove the `useMemo` around `value`, add a `console.log` in PostCard, and count the extra renders when the menu opens. Then explain why the `useMemo` is there.

@@ -1,10 +1,14 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
+import { AuthProvider } from "./auth/AuthContext.jsx";
 import "./styles.css";
 
+// AuthProvider wraps the whole app, so every component can call useAuth()
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <App />
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </StrictMode>
 );
