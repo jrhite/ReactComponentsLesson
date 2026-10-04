@@ -109,9 +109,9 @@ interface PostCardProps {
 
 "The interface is the component's contract: everything it needs from outside. Keep an eye on `user`; we'll come back to it."
 
-**The four kinds (2 min):**
+**The four kinds of component (2 min).** The **What kind?** lens colors every component by its role. These are the four colors in the legend under the lab, and each file's top comment names its kind (`// LAYOUT:`, `// FEATURE:`, `// PRESENTATIONAL:`, `// LOGIC`):
 
-| Kind | What it does | Example |
+| Kind of component | What it does | Example |
 | --- | --- | --- |
 | Layout | Arranges other components | Header, App |
 | Feature | Has its own data or state | UserMenu, PostList |
