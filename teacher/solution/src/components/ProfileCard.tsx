@@ -1,11 +1,15 @@
 // FEATURE (connected): always about the signed-in user, so it reads
 // useAuth() directly. It still passes a plain name down to Avatar.
 
-import { useAuth } from "../auth/AuthContext.jsx";
-import Avatar from "./Avatar.jsx";
+import { useAuth } from "../auth/AuthContext";
+import Avatar from "./Avatar";
 
 export default function ProfileCard() {
   const { user } = useAuth();
+
+  // user is `User | null` in context. App only shows this card when
+  // someone is signed in, but TypeScript can't know that, so check.
+  if (!user) return null;
 
   return (
     <aside className="profile-card">

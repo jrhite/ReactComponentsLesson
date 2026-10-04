@@ -2,19 +2,27 @@
 // `open` is local state: only this component cares whether the menu is open.
 
 import { useEffect, useRef, useState } from "react";
-import Avatar from "./Avatar.jsx";
+import type { User } from "../types";
+import Avatar from "./Avatar";
 
-export default function UserMenu({ user, logout }) {
+interface UserMenuProps {
+  user: User | null;
+  logout: () => void;
+}
+
+export default function UserMenu({ user, logout }: UserMenuProps) {
   const [open, setOpen] = useState(false);
-  const menuRef = useRef(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   // Close the menu on a click outside it, or on Escape
   useEffect(() => {
     if (!open) return;
-    const onClick = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) setOpen(false);
+    const onClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setOpen(false);
     };
-    const onKey = (e) => e.key === "Escape" && setOpen(false);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
     document.addEventListener("mousedown", onClick);
     document.addEventListener("keydown", onKey);
     return () => {

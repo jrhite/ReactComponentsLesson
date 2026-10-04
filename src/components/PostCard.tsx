@@ -4,11 +4,17 @@
 //
 // PROBLEM: it also needs `user`, only to decide which buttons to show.
 
-import Avatar from "./Avatar.jsx";
-import Button from "./Button.jsx";
-import Tag from "./Tag.jsx";
+import type { Post, User } from "../types";
+import Avatar from "./Avatar";
+import Button from "./Button";
+import Tag from "./Tag";
 
-export default function PostCard({ post, user }) {
+interface PostCardProps {
+  post: Post;
+  user: User;
+}
+
+export default function PostCard({ post, user }: PostCardProps) {
   const canEdit = user.role === "editor" || user.role === "admin";
   const canDelete = user.role === "admin";
 

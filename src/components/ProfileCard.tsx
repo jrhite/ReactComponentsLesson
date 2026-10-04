@@ -1,8 +1,13 @@
 // FEATURE: a summary of the signed-in user, next to the posts.
 
-import Avatar from "./Avatar.jsx";
+import type { User } from "../types";
+import Avatar from "./Avatar";
 
-export default function ProfileCard({ user }) {
+interface ProfileCardProps {
+  user: User;
+}
+
+export default function ProfileCard({ user }: ProfileCardProps) {
   return (
     <aside className="profile-card">
       <div className="profile-top">

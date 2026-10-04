@@ -5,17 +5,21 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
     "lab": "vite --open /anatomy.html",
-    "solution": "vite teacher/solution --config vite.config.js --port 5174"
+    "solution": "vite teacher/solution --config vite.config.ts --port 5174",
+    "typecheck": "tsc"
   },
   "dependencies": {
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.9.3",
     "vite": "^5.4.11"
   },
   "engines": {

@@ -1,13 +1,15 @@
 // Pretend server. In a real app these would be fetch() calls to your API.
 
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+import type { Post, Role, User } from "../types";
 
-export async function fakeLogin(role) {
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export async function fakeLogin(role: Role): Promise<User> {
   await wait(300);
   return { id: 1, name: "Jane Doe", email: "jane@teamblog.dev", role };
 }
 
-export async function fetchPosts() {
+export async function fetchPosts(): Promise<Post[]> {
   await wait(400);
   return [
     {

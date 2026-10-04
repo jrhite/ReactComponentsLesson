@@ -3,13 +3,14 @@
 // permission check, and <Can> handles that now.
 
 import { useEffect, useState } from "react";
-import Can from "../auth/Can.jsx";
-import Button from "./Button.jsx";
-import PostCard from "./PostCard.jsx";
-import { fetchPosts } from "../data/fakeApi.js";
+import Can from "../auth/Can";
+import { fetchPosts } from "../data/fakeApi";
+import type { Post } from "../types";
+import Button from "./Button";
+import PostCard from "./PostCard";
 
 export default function PostList() {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -2,12 +2,17 @@
 // so it works in the feed, in search results, or in a test with fake data.
 // <Can> decides which buttons appear.
 
-import Can from "../auth/Can.jsx";
-import Avatar from "./Avatar.jsx";
-import Button from "./Button.jsx";
-import Tag from "./Tag.jsx";
+import Can from "../auth/Can";
+import type { Post } from "../types";
+import Avatar from "./Avatar";
+import Button from "./Button";
+import Tag from "./Tag";
 
-export default function PostCard({ post }) {
+interface PostCardProps {
+  post: Post;
+}
+
+export default function PostCard({ post }: PostCardProps) {
   return (
     <article className="post-card">
       <div className="post-top">

@@ -4,13 +4,18 @@
 
 const COLORS = ["#6366f1", "#0ea5e9", "#d946ef", "#f59e0b", "#10b981", "#ef4444"];
 
-function colorFor(name) {
+function colorFor(name: string): string {
   let hash = 0;
   for (const ch of name) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
   return COLORS[hash % COLORS.length];
 }
 
-export default function Avatar({ name, size = "sm" }) {
+interface AvatarProps {
+  name: string;
+  size?: "sm" | "lg";
+}
+
+export default function Avatar({ name, size = "sm" }: AvatarProps) {
   const initials = name
     .split(" ")
     .map((part) => part[0])

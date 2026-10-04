@@ -3,9 +3,15 @@
 // PREDICT: does Header use `user` or `logout` itself,
 // or does it only pass them along?
 
-import UserMenu from "./UserMenu.jsx";
+import type { User } from "../types";
+import UserMenu from "./UserMenu";
 
-export default function Header({ user, logout }) {
+interface HeaderProps {
+  user: User | null;
+  logout: () => void;
+}
+
+export default function Header({ user, logout }: HeaderProps) {
   return (
     <header className="header">
       <a href="/" className="logo">

@@ -4,12 +4,17 @@
 // PREDICT: PostList receives `user`. What does it actually use it for?
 
 import { useEffect, useState } from "react";
-import Button from "./Button.jsx";
-import PostCard from "./PostCard.jsx";
-import { fetchPosts } from "../data/fakeApi.js";
+import { fetchPosts } from "../data/fakeApi";
+import type { Post, User } from "../types";
+import Button from "./Button";
+import PostCard from "./PostCard";
 
-export default function PostList({ user }) {
-  const [posts, setPosts] = useState([]);
+interface PostListProps {
+  user: User;
+}
+
+export default function PostList({ user }: PostListProps) {
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

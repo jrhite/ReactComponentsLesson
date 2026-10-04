@@ -234,7 +234,7 @@ h1 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--f-display); letter-spacing: -
   <header class="intro">
     <div class="eyebrow">React · Component boundaries</div>
     <h1>Component Anatomy Lab</h1>
-    <p class="lead">This is the Team Blog app from today's lesson. Every outlined box is one React component, and one file in <code>src/components</code>. Switch lenses to see what kind each component is, which ones are reused, and where each gets its data. Flip between the starter code and the finished code to see what the refactor changes. Click any box to inspect it.</p>
+    <p class="lead">This is the Team Blog app from today's lesson. Every outlined box is one React component, and one <code>.tsx</code> file in <code>src/components</code>. Switch lenses to see what kind each component is, which ones are reused, and where each gets its data. Flip between the starter code and the finished code to see what the refactor changes. Click any box to inspect it.</p>
   </header>
 
   <div class="controls">
@@ -356,65 +356,92 @@ h1 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--f-display); letter-spacing: -
 
   /* ---------- One entry per file in the project ---------- */
   var META = {
-    AuthProvider: { kind: "logic", file: "src/auth/AuthContext.jsx",
+    AuthProvider: { kind: "logic", file: "src/auth/AuthContext.tsx",
       why: "Owns the signed-in user and their permissions, and shares them with every component inside it. It draws nothing on screen.",
-      boundary: "It wraps the whole app in main.jsx because the header, the posts, and the profile card all need auth.",
+      boundary: "It wraps the whole app in main.tsx because the header, the posts, and the profile card all need auth.",
       finished: { data: ["context"], sig: "<AuthProvider>\n  <App />\n</AuthProvider>", note: "Provides the context value: user, login, logout, and hasPermission." } },
-    App: { kind: "layout", file: "src/App.jsx",
+    App: { kind: "layout", file: "src/App.tsx",
       why: "The root of the page. It decides whether to show the login screen or the posts.",
       boundary: "Once auth moves out, App only picks a screen. It no longer passes anything down.",
       starter: { data: ["state"], sig: "<App />", note: "Owns user, loading, login, and logout, then hands them to every child that needs them, and some that don't." },
       finished: { data: ["context"], sig: "<App />", note: "Reads user from useAuth() only to choose which screen to show." } },
-    Header: { kind: "layout", file: "src/components/Header.jsx",
+    Header: { kind: "layout", file: "src/components/Header.tsx",
       why: "A page region that positions the logo and the user menu.",
       boundary: "Layout components arrange their children. The logo stays plain JSX because it's one tag used in one place.",
       starter: { data: ["pass"], sig: "<Header user={user} logout={logout} />", note: "Uses neither prop. It hands both straight to UserMenu. That's prop drilling." },
       finished: { data: ["none"], sig: "<Header />", note: "No props and no data. A header redesign now touches only this file." } },
-    UserMenu: { kind: "feature", file: "src/components/UserMenu.jsx",
+    UserMenu: { kind: "feature", file: "src/components/UserMenu.tsx",
       why: "The avatar button and its dropdown. Click the avatar to open it.",
       boundary: "Whether the menu is open is local state, because no other component cares. The menu items are plain buttons: one tag each, so they aren't worth their own files.",
       starter: { data: ["props", "state"], sig: "<UserMenu user={user} logout={logout} />", note: "Gets user and logout through Header, and checks role names like user.role === \"admin\" by hand." },
       finished: { data: ["context", "state"], sig: "<UserMenu />", note: "Calls useAuth() for user and logout, and uses <Can> for the Settings and Manage users items." } },
-    Avatar: { kind: "pres", file: "src/components/Avatar.jsx",
+    Avatar: { kind: "pres", file: "src/components/Avatar.tsx",
       why: "The most reused piece on the page: in the header, on every post, and on the profile card.",
       boundary: "It takes a name as a prop instead of reading the signed-in user. That's what lets it show a post's author as easily as you.",
       starter: { data: ["props"], sig: "<Avatar name={post.author} />", note: "Takes name and an optional size." },
       finished: { data: ["props"], sig: "<Avatar name={post.author} />", note: "Unchanged. Presentational components don't need to know about context." } },
-    PostList: { kind: "feature", file: "src/components/PostList.jsx",
+    PostList: { kind: "feature", file: "src/components/PostList.tsx",
       why: "Loads the posts and renders one PostCard per post.",
       boundary: "It owns the posts because it's the only component that needs the whole list. Each card gets just its own post.",
       starter: { data: ["pass", "state"], sig: "<PostList user={user} />", note: "Uses user for one role check, then passes it to every PostCard." },
       finished: { data: ["state"], sig: "<PostList />", note: "Only owns its posts. <Can> handles the New post button." } },
-    PostCard: { kind: "pres", file: "src/components/PostCard.jsx",
+    PostCard: { kind: "pres", file: "src/components/PostCard.tsx",
       why: "One post's layout, repeated for every post in the list.",
       boundary: "It gets its post as a prop, so it works in the feed, in search results, or in a test with fake data. It never fetches data itself.",
       starter: { data: ["props"], sig: "<PostCard post={post} user={user} />", note: "Needs user only to decide whether to show Edit and Delete." },
       finished: { data: ["props"], sig: "<PostCard post={post} />", note: "Only needs its post. <Can> decides which buttons appear." } },
-    Tag: { kind: "pres", file: "src/components/Tag.jsx",
+    Tag: { kind: "pres", file: "src/components/Tag.tsx",
       why: "A topic label, repeated on every post.",
       boundary: "It shows a word. Filtering by tag would be the job of whoever owns the post list.",
       starter: { data: ["props"], sig: "<Tag>react</Tag>", note: "Its text arrives as children." },
       finished: { data: ["props"], sig: "<Tag>react</Tag>", note: "Unchanged." } },
-    Button: { kind: "pres", file: "src/components/Button.jsx",
+    Button: { kind: "pres", file: "src/components/Button.tsx",
       why: "Every button shares one set of styles, sizes, and focus rings.",
       boundary: "It doesn't know what clicking it does. Whether a Delete button appears at all is decided around it.",
       starter: { data: ["props"], sig: "<Button variant=\"danger\" onClick={onDelete}>\n  Delete\n</Button>", note: "Takes variant, onClick, and children." },
       finished: { data: ["props"], sig: "<Button variant=\"danger\" onClick={onDelete}>\n  Delete\n</Button>", note: "Unchanged." } },
-    Can: { kind: "logic", file: "src/auth/Can.jsx",
+    Can: { kind: "logic", file: "src/auth/Can.tsx",
       why: "Shows its children only when the signed-in user has a permission. Switch roles above to watch it work.",
       boundary: "It reads permissions from context so the components around it don't have to. That's why PostCard no longer needs user.",
       finished: { data: ["context"], sig: "<Can permission=\"posts:delete\">\n  <Button variant=\"danger\">Delete</Button>\n</Can>", note: "Calls useAuth().hasPermission and renders its children, a fallback, or nothing." } },
-    ProfileCard: { kind: "feature", file: "src/components/ProfileCard.jsx",
+    ProfileCard: { kind: "feature", file: "src/components/ProfileCard.tsx",
       why: "Summarizes the signed-in user next to the posts.",
       boundary: "It's always about the current user and sits far from where auth lives, so reading context makes sense. It still passes a plain name to Avatar.",
       starter: { data: ["props"], sig: "<ProfileCard user={user} />", note: "Gets user from App as a prop." },
       finished: { data: ["context"], sig: "<ProfileCard />", note: "Calls useAuth() for user." } },
-    LoginScreen: { kind: "feature", file: "src/components/LoginScreen.jsx",
+    LoginScreen: { kind: "feature", file: "src/components/LoginScreen.tsx",
       why: "Lets you sign in as one of three roles. Click Log out in the user menu to see it.",
       boundary: "It shows three Buttons and calls login. It doesn't know what happens after you sign in.",
       starter: { data: ["props"], sig: "<LoginScreen login={login} loading={loading} />", note: "Gets login and loading from App." },
       finished: { data: ["context"], sig: "<LoginScreen />", note: "Calls useAuth() for login and loading." } }
   };
+
+  /* ---------- Each component's props interface, as written in the code ---------- */
+  var NO_PROPS = "// No props";
+  var SHARED_PROPS = {
+    Avatar: 'interface AvatarProps {\n  name: string;\n  size?: "sm" | "lg";\n}',
+    Button: 'interface ButtonProps extends ComponentProps<"button"> {\n  variant?: "default" | "primary" | "danger";\n}',
+    Tag: "interface TagProps {\n  children: ReactNode;\n}"
+  };
+  var PROPS = {
+    starter: {
+      App: NO_PROPS,
+      Header: "interface HeaderProps {\n  user: User | null;\n  logout: () => void;\n}",
+      UserMenu: "interface UserMenuProps {\n  user: User | null;\n  logout: () => void;\n}",
+      PostList: "interface PostListProps {\n  user: User;\n}",
+      PostCard: "interface PostCardProps {\n  post: Post;\n  user: User;\n}",
+      ProfileCard: "interface ProfileCardProps {\n  user: User;\n}",
+      LoginScreen: "interface LoginScreenProps {\n  login: (role: Role) => void;\n  loading: boolean;\n}"
+    },
+    finished: {
+      AuthProvider: "{ children: ReactNode }",
+      Can: "interface CanProps {\n  permission: Permission;\n  children: ReactNode;\n  fallback?: ReactNode;\n}",
+      App: NO_PROPS, Header: NO_PROPS, UserMenu: NO_PROPS, PostList: NO_PROPS,
+      ProfileCard: NO_PROPS, LoginScreen: NO_PROPS,
+      PostCard: "interface PostCardProps {\n  post: Post;\n}"
+    }
+  };
+  function propsFor(name) { return PROPS[state.version][name] || SHARED_PROPS[name] || NO_PROPS; }
 
   var PROMPTS = {
     kind: {
@@ -618,6 +645,9 @@ h1 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--f-display); letter-spacing: -
       "<h2>" + name + "</h2>" +
       '<div class="file">' + m.file + "</div>" +
       '<div class="chips">' + chips + "</div>" +
+      "<h3>Props interface</h3>" +
+      '<div class="sig">' + esc(propsFor(name)) + "</div>" +
+      "<h3>Used like this</h3>" +
       '<div class="sig">' + esc(info.sig) + "</div>" +
       "<p>" + esc(info.note) + "</p>" +
       '<div class="count">' + (n > 1 ? "Used " + n + " times on this screen" : "Used once on this screen") + "</div>" +

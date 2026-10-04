@@ -1,14 +1,22 @@
 // FEATURE: lets you sign in as one of three roles.
 
-import Button from "./Button.jsx";
+import type { Role } from "../types";
+import Button from "./Button";
 
-export default function LoginScreen({ login, loading }) {
+const ROLES: Role[] = ["viewer", "editor", "admin"];
+
+interface LoginScreenProps {
+  login: (role: Role) => void;
+  loading: boolean;
+}
+
+export default function LoginScreen({ login, loading }: LoginScreenProps) {
   return (
     <section className="login">
       <h2>Sign in to Team Blog</h2>
       <p className="muted">Pick a role to see what each one is allowed to do.</p>
       <div className="login-buttons">
-        {["viewer", "editor", "admin"].map((role) => (
+        {ROLES.map((role) => (
           <Button key={role} variant="primary" onClick={() => login(role)} disabled={loading}>
             {role}
           </Button>
