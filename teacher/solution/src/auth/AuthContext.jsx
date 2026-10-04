@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
   // so consumers don't re-render for no reason.
   const value = useMemo(
     () => ({ user, loading, login, logout, hasPermission }),
-    [user, loading, login, logout, hasPermission]
+    [user, loading, login, logout, hasPermission],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

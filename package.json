@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lab": "vite --open /anatomy.html",
+    "solution": "vite teacher/solution --config vite.config.js --port 5174"
   },
   "dependencies": {
     "react": "^19.1.0",
@@ -15,5 +17,8 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
     "vite": "^5.4.11"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

@@ -25,7 +25,11 @@ export default function PostList({ user }) {
     <main className="post-list">
       <div className="page-head">
         <h2>Team posts</h2>
-        {canWrite ? <Button variant="primary">+ New post</Button> : <span className="muted small">Read-only access</span>}
+        {canWrite ? (
+          <Button variant="primary">+ New post</Button>
+        ) : (
+          <span className="muted small">Read-only access</span>
+        )}
       </div>
 
       {loading ? (

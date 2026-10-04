@@ -20,8 +20,8 @@ Every outlined box in the lab is one file in `src/components`, so students can a
 **Materials**
 
 - This repo: the starter code is in `src/`, and the finished code is in `teacher/solution/src/`
-- The Component Anatomy Lab, served at `/anatomy.html` by the running app (or open `public/anatomy.html` directly)
-- A projector. Students follow along in their own Repl or local copy
+- The Component Anatomy Lab at `http://localhost:5173/anatomy.html` while the app is running
+- A projector. Students follow along in VS Code on their own machines
 - The exit ticket in Segment 6
 
 **Key vocabulary:** component · props · layout / feature / presentational component · prop drilling · context · Provider · `useContext` · custom hook · permission
@@ -49,17 +49,24 @@ src/
    └─ Can.jsx             permission gate
 ```
 
-## Setup (before class, about 5 minutes)
+## Setup
 
-1. Make sure your copy of this repo is **public**, so students can fork or import it.
-2. Test the import on Replit: **Create Repl → Import from GitHub**, paste the repo URL, and click **Run**.
-3. Sign in as each role and confirm the posts load.
-4. Add `/anatomy.html` to the preview URL and confirm the lab loads.
-5. Share the repo URL with students.
+**Before class (about 5 minutes):**
+
+1. Make sure your copy of this repo is **public**, so students can fork it.
+2. Share the repo URL and ask students to arrive with it cloned and `npm install` already run. The README walks them through it. They need Node.js 18 or newer.
+3. On your own machine, run `npm run dev` and `npm run solution`. Sign in as each role on both, at ports 5173 and 5174, and confirm the posts load.
+4. Open `http://localhost:5173/anatomy.html` and confirm the lab loads.
+
+**At the start of class:** every student runs `npm run dev` in VS Code's terminal and has the app open in a browser tab. Anyone whose install failed can pair with a neighbor for Segments 1–2 while it finishes.
+
+**Projector layout:** VS Code on the left, the browser on the right. Keep one tab on the app and one on the lab. The app reloads every time you save.
 
 **Note:** anyone who forks the repo can see the `teacher/` folder, including the solution. If that matters, move `teacher/` to a private repo before sharing.
 
 **Fallback if a student gets stuck:** copy any single file from `teacher/solution/src/` over the matching file in `src/`. The files are designed to swap one at a time.
+
+**If `npm run dev` fails:** check `node -v` (it must be 18 or newer), then delete `node_modules` and run `npm install` again. If port 5173 is in use, Vite picks the next free port and prints it in the terminal.
 
 ## Agenda
 

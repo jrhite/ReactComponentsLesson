@@ -1,9 +1,9 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// host + allowedHosts let Replit's preview pane reach the dev server
+// `npm run dev` starts the app at http://localhost:5173 and opens it in your browser.
+// The Component Anatomy Lab is at http://localhost:5173/anatomy.html
 export default defineConfig({
   plugins: [react()],
-  server: { host: "0.0.0.0", port: 5173, allowedHosts: true },
-  preview: { host: "0.0.0.0", port: 5173, allowedHosts: true },
+  server: { port: 5173, open: true },
 });

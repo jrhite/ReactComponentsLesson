@@ -43,13 +43,19 @@ export default function UserMenu({ user, logout }) {
             <strong>{user.name}</strong>
             <span className="muted small">{user.email}</span>
           </div>
-          <button type="button" role="menuitem" className="menu-item">Profile</button>
+          <button type="button" role="menuitem" className="menu-item">
+            Profile
+          </button>
           {/* PROBLEM: role names are checked by hand, all over the app */}
           {user.role !== "viewer" && (
-            <button type="button" role="menuitem" className="menu-item">Settings</button>
+            <button type="button" role="menuitem" className="menu-item">
+              Settings
+            </button>
           )}
           {user.role === "admin" && (
-            <button type="button" role="menuitem" className="menu-item">Manage users</button>
+            <button type="button" role="menuitem" className="menu-item">
+              Manage users
+            </button>
           )}
           <button type="button" role="menuitem" className="menu-item" onClick={logout}>
             Log out

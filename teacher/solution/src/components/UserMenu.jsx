@@ -46,12 +46,18 @@ export default function UserMenu() {
             <strong>{user.name}</strong>
             <span className="muted small">{user.email}</span>
           </div>
-          <button type="button" role="menuitem" className="menu-item">Profile</button>
+          <button type="button" role="menuitem" className="menu-item">
+            Profile
+          </button>
           <Can permission="settings:edit">
-            <button type="button" role="menuitem" className="menu-item">Settings</button>
+            <button type="button" role="menuitem" className="menu-item">
+              Settings
+            </button>
           </Can>
           <Can permission="users:manage">
-            <button type="button" role="menuitem" className="menu-item">Manage users</button>
+            <button type="button" role="menuitem" className="menu-item">
+              Manage users
+            </button>
           </Can>
           <button type="button" role="menuitem" className="menu-item" onClick={logout}>
             Log out

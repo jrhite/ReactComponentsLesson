@@ -23,7 +23,10 @@ export default function PostList() {
     <main className="post-list">
       <div className="page-head">
         <h2>Team posts</h2>
-        <Can permission="posts:write" fallback={<span className="muted small">Read-only access</span>}>
+        <Can
+          permission="posts:write"
+          fallback={<span className="muted small">Read-only access</span>}
+        >
           <Button variant="primary">+ New post</Button>
         </Can>
       </div>

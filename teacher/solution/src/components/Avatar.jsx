@@ -18,7 +18,11 @@ export default function Avatar({ name, size = "sm" }) {
     .toUpperCase();
 
   return (
-    <span className={`avatar avatar-${size}`} style={{ background: colorFor(name) }} aria-label={name}>
+    <span
+      className={`avatar avatar-${size}`}
+      style={{ background: colorFor(name) }}
+      aria-label={name}
+    >
       {initials}
     </span>
   );
