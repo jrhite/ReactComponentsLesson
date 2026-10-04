@@ -47,7 +47,6 @@ on save, and ES7+ React snippets. Both are optional.
 | Command | What it does |
 | --- | --- |
 | `npm run dev` | Starts the starter app at http://localhost:5173 |
-| `npm run lab` | Starts the app and opens the Anatomy Lab |
 | `npm run solution` | Starts the finished app at http://localhost:5174, for comparing |
 | `npm run typecheck` | Checks every file for type errors. No output means no errors. |
 
