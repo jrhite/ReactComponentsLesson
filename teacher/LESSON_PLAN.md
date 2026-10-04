@@ -158,11 +158,13 @@ Name it on the board: **prop drilling** means passing data through components th
 
 ```tsx
 const AuthContext = createContext<AuthContextValue | null>(null);  // the channel
-<AuthContext.Provider value={...}>...</AuthContext.Provider>        // the broadcaster
+<AuthContext value={...}>...</AuthContext>                          // the broadcaster
 const auth = useContext(AuthContext);                               // a receiver, anywhere below
 ```
 
 If no Provider is above, `useContext` returns the default value you passed to `createContext`, which is `null` here. That's why the type includes `| null`.
+
+Students will see `<AuthContext.Provider value={...}>` in most tutorials and existing code. It's the older way to write the same thing. React 19 lets you render the context itself as the provider, and the React team plans to deprecate `.Provider` eventually. Both work in this project.
 
 **Flip Code to Finished for 10 seconds.** The orange boxes are gone, and Header shows "No data." "That's where we're going."
 
@@ -207,7 +209,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [user, loading, login, logout],
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return <AuthContext value={value}>{children}</AuthContext>;
 }
 
 export function useAuth(): AuthContextValue {
@@ -216,6 +218,21 @@ export function useAuth(): AuthContextValue {
   return ctx;
 }
 ```
+
+> **Callout: three names that sound alike.** This file is confusing on first read because three pieces share almost the same name. Put this table on the board before going further.
+>
+> | Name | What it is | Who uses it |
+> | --- | --- | --- |
+> | `AuthContext` | The **channel**, made once with `createContext()`. It holds no data by itself. | Only this file |
+> | `AuthProvider` | **Our component.** It owns the user state and broadcasts it on the channel. | `main.tsx`, once |
+> | `useAuth()` | **Our hook.** It reads from the channel. | Every component that needs auth |
+> | `AuthContext.Provider` | The **older syntax** for broadcasting, which you'll see in tutorials. Same job as `<AuthContext value={...}>`. | Nobody here |
+>
+> **"Why not just use `AuthContext` directly?"** You could, but wrapping it is the standard pattern, for three reasons:
+>
+> 1. **State has to live in a component.** `useState` only works inside a component, so something has to own the user. `AuthProvider` is that component.
+> 2. **One way in, one way out.** `AuthContext` isn't exported. Other files can't broadcast a different value or read it the wrong way; they go through `AuthProvider` and `useAuth()`.
+> 3. **The hook hides the boilerplate.** Without `useAuth`, every component would repeat `useContext(AuthContext)` plus a `null` check. With it, components write one line and TypeScript knows the result is never `null`.
 
 Say this out loud: "It's the same state App had. We moved it into a component whose only job is to own it and share it. `AuthContextValue` is the context's contract, just like a props interface." `useMemo` and `useCallback` keep the value from changing on every render; don't go deeper unless someone asks.
 

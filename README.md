@@ -46,6 +46,19 @@ The code marks the good props: search the project for `PROPS ARE RIGHT HERE`
 `teacher/solution/src/` also marks `CONTEXT IS RIGHT HERE`. There, `ProfileCard.tsx` uses
 both in one file: it reads the user from context, then passes a plain `name` prop to `Avatar`.
 
+## Three names that sound alike
+
+`src/auth/AuthContext.tsx`, which you build today, has three pieces with nearly the same name:
+
+| Name | What it is | Who uses it |
+| --- | --- | --- |
+| `AuthContext` | The **channel**, made with `createContext()`. Holds no data by itself. | Only `AuthContext.tsx` |
+| `AuthProvider` | **Our component.** Owns the user state and broadcasts it on the channel. | `main.tsx`, once |
+| `useAuth()` | **Our hook.** Reads from the channel. | Any component that needs auth |
+
+Tutorials often write `<AuthContext.Provider value={...}>`. That's the older syntax for the
+same thing. Since React 19, you can write `<AuthContext value={...}>`, which this project uses.
+
 ## Get started
 
 You need [Node.js](https://nodejs.org) 18 or newer (check with `node -v`) and VS Code.

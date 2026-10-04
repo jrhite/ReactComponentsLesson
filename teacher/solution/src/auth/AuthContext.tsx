@@ -1,6 +1,12 @@
 // LOGIC (no UI): owns the signed-in user and their permissions,
 // and broadcasts both to every component inside <AuthProvider>.
 //
+// THREE NAMES, THREE JOBS (they sound alike, so read carefully):
+//   AuthContext  - the channel. Created once with createContext(). Holds nothing by itself.
+//   AuthProvider - OUR component. Owns the state, then broadcasts it on the channel.
+//   useAuth()    - OUR hook. How any component reads from the channel.
+// Other components only ever touch AuthProvider (once, in main.tsx) and useAuth().
+//
 // CONTEXT IS RIGHT HERE: there is one signed-in user for the whole app, and
 // components all over the tree need it (UserMenu, ProfileCard, App, <Can>).
 // Passing it as a prop meant threading it through components that ignore it.
@@ -29,6 +35,7 @@ interface AuthContextValue {
   hasPermission: (permission: Permission) => boolean;
 }
 
+// The channel. `null` is what useContext returns if no provider is above it.
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -62,7 +69,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [user, loading, login, logout, hasPermission],
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  // Broadcast `value` to everything inside. React 19 lets you render the context
+  // itself as the provider. Older code (and most tutorials) write the same thing
+  // as <AuthContext.Provider value={value}>, which still works but is on its way out.
+  return <AuthContext value={value}>{children}</AuthContext>;
 }
 
 export function useAuth(): AuthContextValue {
