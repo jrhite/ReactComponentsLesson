@@ -37,6 +37,11 @@ export default function PostList({ user }: PostListProps) {
         )}
       </div>
 
+      {/*
+        PROPS ARE RIGHT HERE: each PostCard gets its OWN post. Only PostList
+        knows which post goes in which card, and every card needs a different
+        one. Context can't do that: it gives every component the same value.
+      */}
       {loading ? (
         <p className="muted">Loading posts…</p>
       ) : (

@@ -1,5 +1,9 @@
 // LOGIC (no UI): owns the signed-in user and their permissions,
 // and broadcasts both to every component inside <AuthProvider>.
+//
+// CONTEXT IS RIGHT HERE: there is one signed-in user for the whole app, and
+// components all over the tree need it (UserMenu, ProfileCard, App, <Can>).
+// Passing it as a prop meant threading it through components that ignore it.
 
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { fakeLogin } from "../data/fakeApi";

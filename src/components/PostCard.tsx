@@ -1,8 +1,11 @@
 // PRESENTATIONAL: one post's layout, repeated for every post.
-// It gets `post` as a prop, so it could show a post anywhere:
-// the feed, search results, or a test with fake data.
+//
+// PROPS ARE RIGHT HERE: `post` is a good prop. Every card shows a different
+// post, so the parent has to say which one. That also means PostCard can show
+// a post anywhere: the feed, search results, or a test with fake data.
 //
 // PROBLEM: it also needs `user`, only to decide which buttons to show.
+// `user` is the same for every card. That's a sign it belongs in context.
 
 import type { Post, User } from "../types";
 import Avatar from "./Avatar";

@@ -6,6 +6,29 @@ Students look at a small React + TypeScript app, Team Blog, through the **Compon
 
 Every outlined box in the lab is one file in `src/components`, so students can always point at a box and open the matching file. TypeScript helps with the refactor: when students remove a prop, VS Code underlines every place that still passes it.
 
+### The two ideas this lesson is built on
+
+**1. Every component is one of four kinds.** Students should be able to name the kind of any component in the app by the end of class. The comment at the top of each file names it, and the lab's **What kind?** lens colors each component by kind.
+
+| Kind of component | What it does | In Team Blog |
+| --- | --- | --- |
+| Layout | Arranges other components. Holds no data of its own. | `App`, `Header` |
+| Feature | Owns data or state, or reads it from context. | `UserMenu`, `PostList`, `ProfileCard`, `LoginScreen` |
+| Presentational | Shows exactly what its props say. Easy to reuse and test. | `PostCard`, `Avatar`, `Button`, `Tag` |
+| Logic only | Has no UI of its own; provides data or makes a decision. | `AuthProvider`, `Can` (built in class) |
+
+**2. Props and context answer different questions.** Ask: *does every component need the same value, or does each one need its own?*
+
+| | Context | Props |
+| --- | --- | --- |
+| Use it for | One value the whole app shares | A value that differs from child to child |
+| In Team Blog | The signed-in user (`useAuth()`) | Each `PostCard`'s `post`; `Avatar`'s `name` |
+| Why not the other? | As a prop, the user gets threaded through components that ignore it | As context, every PostCard would get the same post |
+
+The code marks both: search for `PROPS ARE RIGHT HERE` (starter and solution) and `CONTEXT IS RIGHT HERE` (solution). The finished `ProfileCard.tsx` shows both in one file.
+
+The refactor only moves `user` into context. **`post` and `name` stay props, on purpose.** Say this explicitly, or students leave thinking "context good, props bad."
+
 **Audience:** students who know JSX, props, `useState`, and basic `useEffect`, and who have seen TypeScript types and interfaces. They don't need any prior experience with Context.
 
 **Learning objectives.** By the end of class, students can:
@@ -109,14 +132,7 @@ interface PostCardProps {
 
 "The interface is the component's contract: everything it needs from outside. Keep an eye on `user`; we'll come back to it."
 
-**The four kinds of component (2 min).** The **What kind?** lens colors every component by its role. These are the four colors in the legend under the lab, and each file's top comment names its kind (`// LAYOUT:`, `// FEATURE:`, `// PRESENTATIONAL:`, `// LOGIC`):
-
-| Kind of component | What it does | Example |
-| --- | --- | --- |
-| Layout | Arranges other components | Header, App |
-| Feature | Has its own data or state | UserMenu, PostList |
-| Presentational | Shows whatever props it's given | Avatar, PostCard, Button |
-| Logic only | No UI of its own | (none yet; two arrive today) |
+**The four kinds of component (2 min).** The **What kind?** lens colors every component by its role. Walk through the four colors in the legend under the lab, using the table in "The two ideas this lesson is built on" above. Have students check the top comment of two or three files (`// LAYOUT:`, `// FEATURE:`, `// PRESENTATIONAL:`). Point out that no logic-only components exist yet, and that two arrive today.
 
 **Switch to the Reuse lens (2 min).** Avatar is written once and used 5 times. Ask the prompt on screen: *"What would it take to make every avatar square if each one were hand-written markup?"* (You'd edit five places and probably miss one.)
 
@@ -128,13 +144,15 @@ Students find the props that only pass through, then learn the tool that fixes i
 
 **Switch to Lens: Data flow, Code: Starter (2 min).** Orange boxes receive props they never use. Header and PostList are orange.
 
-**Read and predict (3 min, pairs).** Have pairs trace `user` in the code, from `App.tsx` to the Delete button in `PostCard.tsx`, by reading each component's props interface. Then answer:
+**Read and predict (2 min, pairs).** Have pairs trace `user` in the code, from `App.tsx` to the Delete button in `PostCard.tsx`, by reading each component's props interface. Then answer:
 
 1. Which components declare `user` in their props but never use it themselves? *(Header passes it straight to UserMenu, and PostList uses it once but mostly passes it on.)*
 2. Why does PostCard need `user`? *(Only to decide whether to show Edit and Delete.)*
 3. What would you change to add a new role, such as `moderator`? *(The `Role` type in `types.ts`, plus every `user.role === …` check, in three files.)*
 
 Name it on the board: **prop drilling** means passing data through components that don't need it, just to reach one that does.
+
+**But not every prop is a problem (1 min).** Open `PostList.tsx` and find the `PROPS ARE RIGHT HERE` comment above `posts.map`. Ask: "Should `post` move into context too?" *(No. Every card needs a different post, and context gives everyone the same value.)* Then compare the two props PostCard receives: `post` differs per card, but `user` is the same for every card. That difference is the whole rule.
 
 **Context in two minutes.** Context is a broadcast channel. A **Provider** high in the tree sends a value, and any component inside it can read that value with `useContext`. Components in between don't touch it.
 
@@ -307,7 +325,7 @@ export default function Can({ permission, children, fallback = null }: CanProps)
 | editor | Yes | Yes | No | Yes | No |
 | admin | Yes | Yes | Yes | Yes | Yes |
 
-**Checkpoint:** in the lab, set **Code: Finished** and **Lens: Data flow**. Students' code should now match it: `PostCardProps` contains only `post`, and the purple boxes are the only components that read context.
+**Checkpoint:** in the lab, set **Code: Finished** and **Lens: Data flow**. Students' code should now match it: `PostCardProps` contains only `post`, and the purple boxes are the only components that read context. Ask one last time: "Why is `post` still a prop?" *(It's different for every card.)*
 
 **Must-say:** hiding a button is about the user experience, not security. Anyone can call your API from the browser console, so the server has to check the same permissions on every request.
 

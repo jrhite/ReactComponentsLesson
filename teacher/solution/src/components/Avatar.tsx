@@ -1,6 +1,8 @@
 // PRESENTATIONAL: shows initials for ANY name it's given.
-// It takes a name as a prop instead of reading the signed-in user,
-// so it works in the header, on every post, and on the profile card.
+//
+// PROPS ARE RIGHT HERE: Avatar takes `name` as a prop instead of reading the
+// signed-in user from context. That's what lets the same component show you
+// in the header AND a post's author on every PostCard.
 
 const COLORS = ["#6366f1", "#0ea5e9", "#d946ef", "#f59e0b", "#10b981", "#ef4444"];
 

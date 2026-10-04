@@ -11,6 +11,7 @@ export default function ProfileCard({ user }: ProfileCardProps) {
   return (
     <aside className="profile-card">
       <div className="profile-top">
+        {/* PROPS ARE RIGHT HERE: Avatar gets a plain name, not the whole user */}
         <Avatar name={user.name} size="lg" />
         <div>
           <strong>{user.name}</strong>

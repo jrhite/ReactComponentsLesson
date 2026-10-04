@@ -16,6 +16,36 @@ Everything is plain React and TypeScript with no other libraries: `useState`, `u
 | `teacher/LESSON_PLAN.md` | A minute-by-minute plan with checkpoints, an exit ticket, and homework. |
 | `teacher/solution/src/` | The finished app, with `AuthProvider`, `useAuth`, and `<Can>`. Same file layout as `src/`. |
 
+## The four kinds of component
+
+Every component in this app is one of four kinds. The comment at the top of each file says
+which, and the lab's **What kind?** lens colors them the same way.
+
+| Kind | What it does | In this app |
+| --- | --- | --- |
+| **Layout** | Arranges other components. Holds no data of its own. | `App`, `Header` |
+| **Feature** | Owns data or state, or reads it from context. | `UserMenu`, `PostList`, `ProfileCard`, `LoginScreen` |
+| **Presentational** | Shows exactly what its props say. Easy to reuse and test. | `PostCard`, `Avatar`, `Button`, `Tag` |
+| **Logic only** | Has no UI of its own; provides data or makes a decision. | `AuthProvider`, `Can` *(you build these)* |
+
+## Props or context?
+
+Both get data into a component. The question is **does every component need the same value,
+or does each one need its own?**
+
+- **Context** is for one value the whole app shares. There's one signed-in user, and
+  components all over the tree need it. Passing it as a prop means threading it through
+  components that ignore it, which is prop drilling.
+- **Props** are for values that differ from one child to the next. `PostList` hands each
+  `PostCard` a *different* post, and `Avatar` shows *whichever* name it's given: you in the
+  header, an author on each post. Context can't do that, because it gives every component
+  the same value.
+
+The code marks the good props: search the project for `PROPS ARE RIGHT HERE`
+(**Cmd/Ctrl+Shift+F** in VS Code). The starter has no context yet, so the finished code in
+`teacher/solution/src/` also marks `CONTEXT IS RIGHT HERE`. There, `ProfileCard.tsx` uses
+both in one file: it reads the user from context, then passes a plain `name` prop to `Avatar`.
+
 ## Get started
 
 You need [Node.js](https://nodejs.org) 18 or newer (check with `node -v`) and VS Code.

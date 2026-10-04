@@ -305,6 +305,7 @@ h1 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--f-display); letter-spacing: -
       <table class="vs">
         <thead><tr><th>Props</th><th>Context</th></tr></thead>
         <tbody>
+          <tr><td><strong>Each child needs its own value</strong>, like each PostCard's post</td><td><strong>Everyone needs the same value</strong>, like the signed-in user</td></tr>
           <tr><td>The parent already has the data</td><td>Many distant components need it</td></tr>
           <tr><td>The component should show <em>any</em> item, like Avatar or PostCard</td><td>It's app-wide, like the signed-in user or the theme</td></tr>
           <tr><td>You want it easy to reuse and test</td><td>Passing it would cross components that ignore it</td></tr>

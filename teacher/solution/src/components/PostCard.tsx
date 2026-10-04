@@ -1,6 +1,11 @@
-// PRESENTATIONAL: one post's layout. It only needs `post` now,
-// so it works in the feed, in search results, or in a test with fake data.
-// <Can> decides which buttons appear.
+// PRESENTATIONAL: one post's layout.
+//
+// PROPS ARE RIGHT HERE: `post` stays a prop. Every card shows a different
+// post, so the parent has to say which one. That's why PostCard works in the
+// feed, in search results, or in a test with fake data.
+//
+// `user` is gone: it was the same for every card, so it moved to context,
+// and <Can> reads it from there to decide which buttons appear.
 
 import Can from "../auth/Can";
 import type { Post } from "../types";
