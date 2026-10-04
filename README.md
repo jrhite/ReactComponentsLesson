@@ -38,8 +38,8 @@ You need [Node.js](https://nodejs.org) 18 or newer (check with `node -v`) and VS
    The app opens in your browser at `http://localhost:5173`. Leave this terminal running:
    the page updates every time you save a file.
 
-3. Open the Component Anatomy Lab in a second browser tab at
-   `http://localhost:5173/anatomy.html`, or run `npm run lab` in a second terminal.
+3. Open the Component Anatomy Lab with the **Component Anatomy Lab ↗** button in the app's
+   bottom-right corner. It opens in a new tab at `http://localhost:5173/anatomy.html`.
 
 VS Code will offer to install two recommended extensions: Prettier, which formats your code
 on save, and ES7+ React snippets. Both are optional.
@@ -59,7 +59,7 @@ and **View → Problems** lists them all.
 ## For students
 
 1. Sign in as **viewer**, **editor**, and **admin**, and notice what changes.
-2. Open the lab at `/anatomy.html`. Click a box, then open the file it names.
+2. Open the lab with the **Component Anatomy Lab ↗** button. Click a box, then open the file it names.
 3. Follow along as we refactor. Your checkpoints:
    - `src/auth/AuthContext.tsx` exists, with `AuthProvider` and `useAuth`.
    - No props interface contains `user`, `login`, or `logout`.

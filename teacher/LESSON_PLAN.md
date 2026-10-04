@@ -21,7 +21,7 @@ Every outlined box in the lab is one file in `src/components`, so students can a
 **Materials**
 
 - This repo: the starter code is in `src/`, and the finished code is in `teacher/solution/src/`
-- The Component Anatomy Lab at `http://localhost:5173/anatomy.html` while the app is running
+- The Component Anatomy Lab: the **Component Anatomy Lab ↗** button in the app's bottom-right corner opens it at `http://localhost:5173/anatomy.html`
 - A projector. Students follow along in VS Code on their own machines
 - The exit ticket in Segment 6
 

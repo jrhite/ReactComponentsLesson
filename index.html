@@ -5,9 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27%3E%3Cpath d=%27M0 6a6 6 0 0 1 6-6h8a6 6 0 0 1 6 6v8a6 6 0 0 1-6 6H0z%27 fill=%27%230f766e%27/%3E%3C/svg%3E" />
     <title>Team Blog — React Components Lesson</title>
+    <style>
+      /* Lesson link, kept outside the React app so the components match the lab */
+      .lab-link {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        z-index: 100;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: #2d55c8;
+        color: #fff;
+        font: 600 14px/1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        text-decoration: none;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+      }
+      .lab-link:hover { background: #2446a8; }
+      .lab-link:focus-visible { outline: 3px solid #9db4ff; outline-offset: 2px; }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <a class="lab-link" href="/anatomy.html" target="_blank" rel="noopener">Component Anatomy Lab ↗</a>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
