@@ -132,7 +132,7 @@ interface PostCardProps {
 
 "The interface is the component's contract: everything it needs from outside. Keep an eye on `user`; we'll come back to it."
 
-**The four kinds of component (2 min).** The **What kind?** lens colors every component by its role. Walk through the four colors in the legend under the lab, using the table in "The two ideas this lesson is built on" above. Have students check the top comment of two or three files (`// LAYOUT:`, `// FEATURE:`, `// PRESENTATIONAL:`). Point out that no logic-only components exist yet, and that two arrive today.
+**The four kinds of component (2 min).** The **What kind?** lens colors every component by its role. Walk through the four colors in the legend under the lab. Click one (for example, **Presentational**) to highlight just those components and fade the rest; click it again or **Show all** to reset. Explain each kind using the table in "The two ideas this lesson is built on" above. Have students check the top comment of two or three files (`// LAYOUT:`, `// FEATURE:`, `// PRESENTATIONAL:`). Point out that no logic-only components exist yet, and that two arrive today.
 
 **Switch to the Reuse lens (2 min).** Avatar is written once and used 5 times. Ask the prompt on screen: *"What would it take to make every avatar square if each one were hand-written markup?"* (You'd edit five places and probably miss one.)
 
