@@ -465,9 +465,3 @@ export default function Can({ permission, children, fallback = null }: CanProps)
 > Stretch: build a `PostDetail` page that shows one post with its full text, reusing Avatar, Tag, Button and Can. Challenge: add a light/dark theme with a second, typed `ThemeContext`, and explain why theme belongs in context but post data doesn't.
 >
 > Great work today."
-
----
-
-## Optional: the voiced version
-
-If you'd like a narrator instead of reading aloud, the same words were recorded as an ElevenLabs flow, with the voice Jay Rogers: https://elevenlabs.io/app/flows/fPTyjtfH3CB3OTFx8rz4. Those clips answer one particular run of the lesson, so for a class, read this script and use the clips only as sample takes.
