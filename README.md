@@ -133,7 +133,7 @@ src/
 
 ## For teachers
 
-Start with [`teacher/LESSON_PLAN.md`](teacher/LESSON_PLAN.md). To demo the finished app, run
+Start with [`teacher/LESSON_PLAN.md`](teacher/LESSON_PLAN.md), then read [`teacher/LESSON_SCRIPT.md`](teacher/LESSON_SCRIPT.md) aloud: it has the words to say, the questions to ask, and what to do with wrong answers. To demo the finished app, run
 `npm run solution`, which serves it on port 5174 next to the starter. To help a stuck student,
 copy one file from `teacher/solution/src/` over the matching file in `src/`.
 
