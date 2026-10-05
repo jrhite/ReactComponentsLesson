@@ -108,6 +108,8 @@ and **View → Problems** lists them all.
    - `npm run typecheck` prints no errors.
    - Every `user.role === …` check is replaced with `<Can permission="…">`.
 
+Your teacher may also give you a link to a **voice teacher** that runs the lesson with you: it speaks, listens to your answers, and points you to the matching step in `CODE_STEPS.md`. Ask your teacher for the link.
+
 When you're done, set the lab to **Code: Finished**. Your code should match what it shows.
 
 ```
