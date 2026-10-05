@@ -102,7 +102,7 @@ and **View → Problems** lists them all.
 
 1. Sign in as **viewer**, **editor**, and **admin**, and notice what changes.
 2. Open the lab with the **Component Anatomy Lab ↗** button. Click a box, then open the file it names.
-3. Follow along as we refactor. Your checkpoints:
+3. Follow along as we refactor. The code to type is in [`CODE_STEPS.md`](CODE_STEPS.md). Your checkpoints:
    - `src/auth/AuthContext.tsx` exists, with `AuthProvider` and `useAuth`.
    - No props interface contains `user`, `login`, or `logout`.
    - `npm run typecheck` prints no errors.
